@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { normalizeName } from "./text";
+import { getCheckInTarget } from "./workflow-rules";
 
 const S = () => import("./server/core.server");
 
@@ -59,11 +60,12 @@ export const doorCheckIn = createServerFn({ method: "POST" })
     await assertRole(context.supabase, context.userId, ["admin", "door"]);
     const db = await admin();
     const email = (context.claims as { email?: string }).email ?? null;
-    const now = new Date().toISOString();
+    const target = getCheckInTarget(Boolean(data.undo));
+    const update = data.undo ? target.update : { ...target.update, checked_in_by: context.userId };
     // Conditional update makes check-in idempotent even with two devices at the door.
     const q = data.undo
-      ? db.from("guests").update({ checked_in_at: null, checked_in_by: null }).eq("id", data.guestId).not("checked_in_at", "is", null)
-      : db.from("guests").update({ checked_in_at: now, checked_in_by: context.userId }).eq("id", data.guestId).is("checked_in_at", null);
+      ? db.from("guests").update(update).eq("id", data.guestId).not("checked_in_at", "is", null)
+      : db.from("guests").update(update).eq("id", data.guestId).is("checked_in_at", null);
     const { data: rows, error } = await q.select("id, checked_in_at");
     if (error) throw new Error("Não foi possível registrar. Tente de novo.");
     if (!rows?.length) {
@@ -73,7 +75,7 @@ export const doorCheckIn = createServerFn({ method: "POST" })
     }
     await db.from("check_in_logs").insert({
       guest_id: data.guestId,
-      action: data.undo ? "undo" : "check_in",
+      action: target.action,
       performed_by: context.userId,
       performed_by_email: email,
     });
