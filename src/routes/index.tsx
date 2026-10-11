@@ -109,7 +109,7 @@ function InvitationPage() {
         <p className="eyebrow beloved">DA NOSSA QUERIDA</p>
         <h1 className="honoree">{event.honoree || "Derci"}<span>♡</span></h1>
 
-        <p className="intro">O melhor presente é ter por perto quem faz parte da nossa vida. Venha comemorar com a gente esse capítulo tão bonito da história da Derci.</p>
+        <p className="intro">Essa data tão especial merece ser comemorada ao lado de pessoas que fazem parte da sua história! Contamos com a sua presença para tornar esse momento ainda mais inesquecível!</p>
 
         <section className="event-details" aria-label="Informações da festa">
           <div className="detail">
