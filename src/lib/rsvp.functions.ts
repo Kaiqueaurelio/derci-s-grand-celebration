@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { cleanName, normalizeName, onlyDigits } from "./text";
+import { cleanName, normalizeName } from "./text";
+import { validateRsvpGroupRules } from "./workflow-rules";
 
 const nameSchema = z
   .string()
@@ -58,16 +59,7 @@ export const getPublicEvent = createServerFn({ method: "GET" }).handler(async ()
 type RsvpInput = z.infer<typeof rsvpSchema>;
 
 function validateGroup(input: RsvpInput, phoneRequired: boolean, maxCompanions: number) {
-  const phone = onlyDigits(input.phone ?? "");
-  if (phoneRequired && phone.length < 10) throw new Error("Informe um telefone/WhatsApp com DDD.");
-  if (phone && (phone.length < 10 || phone.length > 13)) throw new Error("Telefone inválido. Use DDD + número.");
-  const companions = input.attending ? input.companions : [];
-  if (companions.length > maxCompanions) throw new Error(`Máximo de ${maxCompanions} acompanhantes por grupo.`);
-  const names = [input.responsibleName, ...companions];
-  const normalized = names.map(normalizeName);
-  const dup = normalized.find((n, i) => normalized.indexOf(n) !== i);
-  if (dup) throw new Error("Há nomes repetidos no grupo. Revise os acompanhantes.");
-  return { phone: phone || null, names, normalized };
+  return validateRsvpGroupRules(input, phoneRequired, maxCompanions);
 }
 
 async function findConflicts(normalized: string[], exceptGroupId?: string) {
