@@ -1338,3 +1338,23 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
 @media (prefers-reduced-motion: reduce) {
   .story-card,.gallery-cta,.gallery-secondary-cta,.floating-celebration-nav a,.floating-celebration-nav button { transition: none; }
 }
+
+
+/* Admin event settings editor */
+.event-settings-card { max-width:900px; margin:0 auto; }
+.event-settings-form { display:flex; flex-direction:column; gap:18px; }
+.settings-section { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding:18px; border:1px solid rgba(178,138,66,.3); background:rgba(255,253,247,.72); }
+.settings-section h3 { grid-column:1/-1; display:flex; align-items:center; gap:9px; margin:0; color:var(--derci-dark-gold); font:600 22px 'Cormorant Garamond',Georgia,serif; }
+.settings-section label { display:flex; flex-direction:column; gap:7px; min-width:0; color:#62533c; font:600 13px Arial,sans-serif; }
+.settings-section label svg { display:inline; }
+.settings-section input:not([type=checkbox]),.settings-section select { box-sizing:border-box; width:100%; min-width:0; min-height:43px; border:1px solid #d5c4a3; border-radius:3px; background:#fffdf8; color:#29251f; padding:10px 11px; font:14px Arial,sans-serif; }
+.settings-section input:focus,.settings-section select:focus { outline:2px solid rgba(178,138,66,.28); border-color:var(--derci-gold); }
+.settings-section .settings-toggle { display:flex; flex-direction:row; align-items:center; gap:10px; line-height:1.45; }
+.settings-toggle input[type=checkbox] { width:18px; height:18px; accent-color:var(--derci-green); flex:0 0 auto; }
+.settings-number-grid { grid-column:1/-1; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.settings-save { width:100%; }
+@media(max-width:600px) {
+ .settings-section { grid-template-columns:1fr; padding:14px; }
+ .settings-section h3,.settings-number-grid { grid-column:1; }
+ .settings-number-grid { grid-template-columns:1fr; }
+}
