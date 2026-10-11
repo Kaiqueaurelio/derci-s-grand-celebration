@@ -22,6 +22,7 @@ function InvitationPage() {
   const [copied, setCopied] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [countdown, setCountdown] = useState({days:0,hours:0,minutes:0,seconds:0});
+  const [celebrationBurst, setCelebrationBurst] = useState(false);
 
   useEffect(() => {
     const updateProgress = () => {
@@ -45,7 +46,7 @@ function InvitationPage() {
     updateCountdown();
     const timer = window.setInterval(updateCountdown, 1000);
     return () => window.clearInterval(timer);
-  }, [event.eventDate]);
+  }, [event.eventDate, event.eventTime]);
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>(".scroll-reveal"));
@@ -82,7 +83,8 @@ function InvitationPage() {
   }
 
   async function shareInvitation() {
-    const text = "É surpresa! Vamos celebrar os 80 anos da nossa querida Derci em 12/10/2026 às 13h. Por favor, mantenha segredo. " + window.location.href;
+    const dateLabel = new Date(event.eventDate + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const text = "É surpresa! Vamos celebrar os 80 anos da nossa querida " + (event.honoree || "Derci") + " em " + dateLabel + " às " + event.eventTime + ". Por favor, mantenha segredo. " + window.location.href;
     if (navigator.share) {
       try { await navigator.share({ title: "80 anos da Dona Derci", text, url: window.location.href }); } catch { /* share dismissed */ }
     } else {
@@ -149,6 +151,7 @@ function InvitationPage() {
           {event.galleryEnabled && <a className="secondary-action" href="/galeria"><Heart size={17}/> Ver álbum de memórias</a>}
         </div>
 
+        <button className="little-celebration" type="button" onClick={() => setCelebrationBurst(true)}><Sparkles size={15}/> Celebrar esse amor <span>♡</span></button>
         <footer className="footer-note">Com carinho, para celebrar uma vida inteira de amor.</footer>
       </div>
 
