@@ -194,7 +194,8 @@ function InvitationPage() {
         <h2>Vamos guardar esse dia para sempre.</h2>
         <p className="section-copy">Depois da festa, este cantinho será o lugar para rever os sorrisos, os abraços e os momentos que fizeram o dia ser inesquecível.</p>
         <div className="memory-ribbon"><span>momentos</span><span>♡</span><span>memórias</span><span>♡</span><span>família</span></div>
-        {event.galleryEnabled ? <a className="gallery-cta" href="/galeria"><Camera size={18}/> Entrar no álbum de memórias <ArrowRight size={17}/></a> : <p className="gallery-coming"><Heart size={16}/> O álbum de memórias vem aí!</p>}
+        <a className="gallery-cta" href="https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing" target="_blank" rel="noreferrer"><Camera size={18}/> Ver fotos e vídeos no Google Drive <ArrowRight size={17}/></a>
+        {event.galleryEnabled && <a className="gallery-secondary-cta" href="/galeria"><UploadCloud size={17}/> Enviar fotos para compartilhar</a>}
       </section>
 
       <section className="derci-final-cta scroll-reveal">
