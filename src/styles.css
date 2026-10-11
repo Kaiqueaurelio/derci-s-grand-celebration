@@ -1420,3 +1420,18 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
   .detail strong { font-size: 13px; }
   .detail .location { font-size: 11px; }
 }
+
+
+/* Remove the optional Lovable editor badge when it is injected into the page. */
+#lovable-badge,
+#lovable-badge-root,
+.lovable-badge,
+lovable-badge,
+[data-lovable-badge],
+a[href*="lovable.dev"][aria-label*="Edit"],
+iframe[title*="Edit with Lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
