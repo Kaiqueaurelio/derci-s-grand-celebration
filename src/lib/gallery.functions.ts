@@ -27,6 +27,7 @@ export type GalleryItem = {
   kind: "image" | "video";
   mimeType: string;
   url: string;
+  downloadUrl: string;
   name: string;
   uploaderName: string | null;
   createdAt: string;
@@ -62,6 +63,7 @@ export const getGallery = createServerFn({ method: "POST" })
           kind: r.kind as "image" | "video",
           mimeType: r.mime_type,
           url: urls.get(r.storage_path as string)!,
+          downloadUrl: urls.get(r.storage_path as string)! + (urls.get(r.storage_path as string)!.includes("?") ? "&" : "?") + "download=" + encodeURIComponent(r.original_name),
           name: r.original_name,
           uploaderName: r.uploader_name,
           createdAt: r.captured_at ?? r.created_at,
