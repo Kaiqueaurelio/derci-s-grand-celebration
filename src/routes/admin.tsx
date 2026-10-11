@@ -42,6 +42,40 @@ function AdminPage() {
   const [galleryCode,setGalleryCode]=useState("");
   const [settingsMessage,setSettingsMessage]=useState("");
 
+  useEffect(() => {
+    if (!showForm) return;
+    const dialog = document.querySelector<HTMLElement>(".edit-modal[role='dialog']");
+    if (!dialog) return;
+    const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusFrame = window.requestAnimationFrame(() => {
+      dialog.querySelector<HTMLElement>('input:not([type="radio"]):not([disabled])')?.focus();
+    });
+    const selector = 'a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setShowForm(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const items = Array.from(dialog.querySelectorAll<HTMLElement>(selector)).filter(el => el.getClientRects().length > 0);
+      const first = items[0], last = items[items.length - 1];
+      if (!first || !last) { event.preventDefault(); return; }
+      if (!dialog.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+      else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (previousActive?.isConnected) previousActive.focus();
+    };
+  }, [showForm]);
+
   async function refresh(){
     setBusy(true);setError("");
     try { const role=await getMyRole(); if(role.role!=="admin"&&!role.canClaim){await navigate({to:"/entrar"});return;} setData(await getDashboard()); }
@@ -210,6 +244,6 @@ function AdminPage() {
       <p className="privacy-note">A integração depende das credenciais seguras configuradas no backend. Nenhuma credencial é exibida nesta página.</p>
     </section>
     </>}
-    {showForm&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowForm(false)}}><section className="rsvp-modal edit-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setShowForm(false)}>×</button><h2>{editing?"Editar grupo":"Adicionar convidado"}</h2><form onSubmit={save}><label>Responsável<input required minLength={3} value={name} onChange={e=>setName(e.target.value)}/></label><label>WhatsApp<input value={phone} onChange={e=>setPhone(e.target.value)}/></label><fieldset><legend>Status</legend><label className="radio-label"><input type="radio" checked={attending==="yes"} onChange={()=>setAttending("yes")}/> Confirmado</label><label className="radio-label"><input type="radio" checked={attending==="pending"} onChange={()=>setAttending("pending")}/> Pendente</label><label className="radio-label"><input type="radio" checked={attending==="no"} onChange={()=>setAttending("no")}/> Não comparecerá</label></fieldset>{attending!=="no"&&<div className="companions"><div className="companions-heading"><Users size={18}/> Acompanhantes</div>{companions.map((n,i)=><div className="companion-row" key={i}><input required value={n} onChange={e=>setCompanions(old=>old.map((v,j)=>i===j?e.target.value:v))} placeholder="Nome completo"/><button type="button" onClick={()=>setCompanions(old=>old.filter((_,j)=>i!==j))}>×</button></div>)}{companions.length<30&&<button type="button" className="add-companion" onClick={()=>setCompanions(old=>[...old,""])}>+ Adicionar acompanhante</button>}</div>}<label>Observações<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label><button className="primary-action submit-action">Salvar convidado</button></form></section></div>}
+    {showForm&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowForm(false)}}><section className="rsvp-modal edit-modal" role="dialog" aria-modal="true" aria-labelledby="admin-guest-dialog-title" tabIndex={-1}><button className="modal-close" onClick={()=>setShowForm(false)} aria-label="Fechar formulário">×</button><h2 id="admin-guest-dialog-title">{editing?"Editar grupo":"Adicionar convidado"}</h2><form onSubmit={save}><label>Responsável<input required minLength={3} value={name} onChange={e=>setName(e.target.value)}/></label><label>WhatsApp<input value={phone} onChange={e=>setPhone(e.target.value)}/></label><fieldset><legend>Status</legend><label className="radio-label"><input type="radio" checked={attending==="yes"} onChange={()=>setAttending("yes")}/> Confirmado</label><label className="radio-label"><input type="radio" checked={attending==="pending"} onChange={()=>setAttending("pending")}/> Pendente</label><label className="radio-label"><input type="radio" checked={attending==="no"} onChange={()=>setAttending("no")}/> Não comparecerá</label></fieldset>{attending!=="no"&&<div className="companions"><div className="companions-heading"><Users size={18}/> Acompanhantes</div>{companions.map((n,i)=><div className="companion-row" key={i}><input required value={n} onChange={e=>setCompanions(old=>old.map((v,j)=>i===j?e.target.value:v))} placeholder="Nome completo"/><button type="button" onClick={()=>setCompanions(old=>old.filter((_,j)=>i!==j))}>×</button></div>)}{companions.length<30&&<button type="button" className="add-companion" onClick={()=>setCompanions(old=>[...old,""])}>+ Adicionar acompanhante</button>}</div>}<label>Observações<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label><button className="primary-action submit-action">Salvar convidado</button></form></section></div>}
   </main>;
 }

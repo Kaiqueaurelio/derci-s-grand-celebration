@@ -22,8 +22,8 @@ function GalleryPage(){
  const [uploadsEnabled,setUploadsEnabled]=useState(false);
  const [requiresAuth,setRequiresAuth]=useState(false);
 
- async function refresh(accessCode=code){
-  setError("");setMessage("");
+ async function refresh(accessCode=code,clearFeedback=true){
+  if(clearFeedback){setError("");setMessage("");}
   try{const result=await getGallery({data:{code:accessCode||undefined}});setItems(result.items);setUploadsEnabled(result.uploadsEnabled);setNeedCode(false);}
   catch(e){const msg=e instanceof Error?e.message:"Não foi possível carregar o álbum.";if(msg.includes("CODE_REQUIRED")||msg.includes("CODE_INVALID"))setNeedCode(true);else if(msg.includes("AUTH_REQUIRED")){setRequiresAuth(true);setError("Esta galeria exige acesso autenticado.");}else setError(msg.includes("GALLERY_DISABLED")?"O álbum ainda não foi habilitado pela organização.":msg);}
  }
@@ -73,7 +73,8 @@ function GalleryPage(){
    }catch(e){setError(f.name+": "+(e instanceof Error?e.message:"Falha ao enviar arquivo."));}
    finally{setUploading(old=>old.filter(n=>n!==f.name));}
   }
-  setBusy(false);await refresh();
+  await refresh(code,false);
+  setBusy(false);
  }
 
  return <main className="derci-page gallery-page">
@@ -82,7 +83,7 @@ function GalleryPage(){
   {error&&!needCode&&<p className="form-error gallery-error" role="alert">{error}</p>}
   {requiresAuth&&<button className="primary-action" onClick={async()=>{const {data}=await supabase.auth.getSession();if(!data.session){window.location.href="/entrar";return;}await refresh();}}>Entrar para ver álbum</button>}
   {!needCode&&!error&&<>
-   <section className="upload-panel"><div className="upload-icon"><UploadCloud size={26}/></div><div className="upload-copy"><h2>Compartilhe suas fotos e vídeos</h2><p>Selecione arquivos do celular ou computador. Imagens e vídeos ajudam a contar essa história.</p></div><label className="primary-action upload-button"><input type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime" onChange={e=>{void uploadFiles(e.target.files);e.currentTarget.value="";}} disabled={!uploadsEnabled||busy} hidden/><UploadCloud size={17}/>{busy?"Enviando...":"Selecionar arquivos"}</label>{uploading.map(n=><p className="uploading-item" key={n}>Enviando: {n}</p>)}{message&&<p className="upload-success">{message}</p>}{error&&<p className="form-error">{error}</p>}{!uploadsEnabled&&<p className="privacy-note">Envios temporariamente desativados.</p>}<label className="uploader-name">Seu nome (opcional)<input value={uploader} onChange={e=>setUploader(e.target.value)} maxLength={80} placeholder="Como devemos identificar você?"/></label></section>
+   <section className="upload-panel"><div className="upload-icon"><UploadCloud size={26}/></div><div className="upload-copy"><h2>Compartilhe suas fotos e vídeos</h2><p>Selecione arquivos do celular ou computador. Imagens e vídeos ajudam a contar essa história.</p></div><label className="primary-action upload-button"><input type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime" onChange={e=>{void uploadFiles(e.target.files);e.currentTarget.value="";}} disabled={!uploadsEnabled||busy} hidden/><UploadCloud size={17}/>{busy?"Enviando...":"Selecionar arquivos"}</label>{uploading.map(n=><p className="uploading-item" key={n}>Enviando: {n}</p>)}{message&&<p className="upload-success" role="status">{message}</p>}{!uploadsEnabled&&<p className="privacy-note">Envios temporariamente desativados.</p>}<label className="uploader-name">Seu nome (opcional)<input value={uploader} onChange={e=>setUploader(e.target.value)} maxLength={80} placeholder="Como devemos identificar você?"/></label></section>
    <section className="gallery-grid-section"><div className="gallery-section-heading"><div><h2>Momentos compartilhados</h2><p>{items.length} arquivo(s) aprovado(s)</p></div><button className="outline-action" onClick={()=>void refresh()}><Heart size={15}/> Atualizar</button></div>{items.length===0?<div className="gallery-empty"><ImageIcon size={34}/><p>As primeiras memórias aparecerão aqui assim que forem enviadas e aprovadas.</p></div>:<div className="gallery-grid">{items.map(item=><button className="gallery-tile" key={item.id} onClick={()=>setSelected(item)} aria-label={"Abrir "+item.name}>{item.kind==="image"?<img src={item.url} alt={item.name} loading="lazy"/>:<div className="video-tile"><Video size={32}/><span>Vídeo</span></div>}<span className="tile-caption">{item.name}</span></button>)}</div>}</section>
   </>}
   {selected&&<div className="modal-backdrop gallery-lightbox" onMouseDown={e=>{if(e.target===e.currentTarget)setSelected(null)}}><section className="gallery-viewer" role="dialog" aria-modal="true" aria-labelledby="gallery-viewer-title" tabIndex={-1}><button className="modal-close" onClick={()=>setSelected(null)} aria-label="Fechar">×</button>{selected.kind==="image"?<img src={selected.url} alt={selected.name}/>:<video src={selected.url} controls playsInline/>}<p id="gallery-viewer-title">{selected.name}</p><a className="primary-action gallery-download-action" href={selected.downloadUrl} download={selected.name}><Download size={16}/> Baixar arquivo</a></section></div>}
