@@ -1205,3 +1205,31 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
   .detail { padding-inline:2px; }
   .floating-celebration-nav { opacity:.92; }
 }
+
+
+/* RSVP assistant in the admin workspace */
+.rsvp-assistant-card { border:1px solid rgba(178,138,66,.34); background:linear-gradient(135deg,rgba(255,252,245,.98),rgba(239,229,207,.68)); }
+.rsvp-assistant-card .media-heading { align-items:flex-start; }
+.rsvp-assistant-card .media-heading h2 { display:flex; align-items:center; gap:10px; }
+.rsvp-assistant-card .media-heading h2 svg { color:#9b793e; flex-shrink:0; }
+.assistant-mark { display:grid; place-items:center; flex:0 0 48px; width:48px; height:48px; border:1px solid #d4bd8e; border-radius:50%; color:#354533; background:#f5eddd; }
+.assistant-question-form { margin-top:20px; }
+.assistant-question-form > label { display:block; margin-bottom:8px; color:#66583e; font-size:12px; font-weight:700; }
+.assistant-input-row { display:flex; gap:10px; }
+.assistant-input-row input { flex:1; min-width:0; padding:13px 14px; border:1px solid #d5c7aa; border-radius:4px; background:#fffdf8; color:#29251f; font:inherit; }
+.assistant-input-row .primary-action { display:inline-flex; align-items:center; justify-content:center; gap:8px; white-space:nowrap; }
+.assistant-suggestions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.assistant-suggestions .filter-chip { white-space:normal; text-align:left; }
+.assistant-answer { margin-top:20px; padding:18px 20px; border-left:3px solid #a98749; background:rgba(255,255,255,.72); color:#3b3428; }
+.assistant-answer > div { display:flex; align-items:center; gap:8px; color:#354533; }
+.assistant-answer p { margin:12px 0; line-height:1.65; white-space:pre-wrap; }
+.assistant-answer small { color:#7c705c; font-size:11px; }
+.assistant-spin { animation:assistant-spin 1s linear infinite; }
+@keyframes assistant-spin { to { transform:rotate(360deg); } }
+@media(max-width:640px) {
+  .rsvp-assistant-card .media-heading { gap:10px; }
+  .assistant-mark { flex-basis:38px; width:38px; height:38px; }
+  .assistant-input-row { flex-direction:column; }
+  .assistant-input-row .primary-action { width:100%; }
+}
+@media(prefers-reduced-motion:reduce) { .assistant-spin { animation:none; } }
