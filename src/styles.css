@@ -1358,3 +1358,21 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
  .settings-section h3,.settings-number-grid { grid-column:1; }
  .settings-number-grid { grid-template-columns:1fr; }
 }
+
+
+/* Accessible direct download action inside the in-app photo viewer. */
+.gallery-download-action {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  gap: 9px;
+  box-sizing: border-box;
+}
+.gallery-viewer .gallery-download-action { display: flex; }
+@media (max-width: 480px) {
+  .gallery-viewer .gallery-download-action { width: 100%; }
+}
