@@ -1233,3 +1233,108 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
   .assistant-input-row .primary-action { width:100%; }
 }
 @media(prefers-reduced-motion:reduce) { .assistant-spin { animation:none; } }
+
+
+/* Invitation palette polish: ivory paper, antique champagne gold and botanical olive. */
+:root {
+  --derci-cream: #f7eedf;
+  --derci-paper: #fffaf0;
+  --derci-gold: #b28a42;
+  --derci-dark-gold: #79551f;
+  --derci-ink: #29251f;
+  --derci-green: #354533;
+}
+.derci-page {
+  background:
+    radial-gradient(ellipse at 10% 8%, rgba(255,255,255,.9), transparent 38%),
+    radial-gradient(ellipse at 94% 76%, rgba(178,138,66,.09), transparent 34%),
+    #f7eedf;
+}
+.invitation-shell {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.38), transparent 34%),
+    #fffdf7;
+  border-color: rgba(178,138,66,.82);
+  box-shadow: 0 22px 64px rgba(66,49,22,.075), inset 0 0 0 1px rgba(255,255,255,.72);
+}
+.frame-line { border-color: rgba(178,138,66,.45); }
+.corner { color: rgba(53,69,51,.22); }
+.botanical-mark,.story-icon,.memory-emblem { color: var(--derci-green); }
+.botanical-mark span { color: var(--derci-gold); }
+.derci-section {
+  background: rgba(255,250,240,.82);
+  border-color: rgba(178,138,66,.35);
+}
+.derci-section:nth-of-type(odd) {
+  background: rgba(241,235,219,.78);
+}
+.derci-section::before { border-color: rgba(53,69,51,.15); }
+.section-eyebrow { color: var(--derci-green); }
+.derci-section h2,.derci-final-cta h2 { color: var(--derci-dark-gold); }
+.story-card { border-color: rgba(178,138,66,.34); background: rgba(255,253,247,.92); }
+.story-icon {
+  border-color: rgba(53,69,51,.32);
+  background: #f3f0e5;
+}
+.story-card:hover { border-color: var(--derci-gold); }
+.story-card h3 { color: #40392d; }
+.secret-section {
+  background: linear-gradient(135deg, rgba(53,69,51,.07), rgba(255,250,240,.9) 48%, rgba(178,138,66,.09));
+}
+.secret-flower { color: rgba(53,69,51,.36); }
+.memory-emblem {
+  border-color: rgba(53,69,51,.3);
+  background: #f3f0e5;
+  box-shadow: inset 0 0 0 5px rgba(53,69,51,.045);
+}
+.memory-ribbon { color: var(--derci-green); }
+.gallery-cta,.gallery-secondary-cta {
+  border-color: rgba(121,85,31,.48);
+  color: var(--derci-dark-gold);
+  background: #fffaf0;
+}
+.gallery-cta:hover,.gallery-secondary-cta:hover { background: #f0e5ce; }
+.derci-final-cta {
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(255,255,255,.07), transparent 48%),
+    linear-gradient(125deg, #354533, #46513a 55%, #303e30);
+}
+.derci-final-cta::before { border-color: rgba(224,199,142,.56); }
+.derci-final-cta > svg { color: #d8bd82; }
+.derci-final-cta .section-eyebrow { color: #e2d2ad; }
+.derci-final-cta h2 { color: #fff7e8; }
+.final-confirm-button {
+  color: #4b422f;
+  border-color: #d8bd82;
+  background: #f7eedf;
+}
+.final-confirm-button:hover { color: #354533; background: #fffaf0; }
+.final-share-link { color: #eee2c8; }
+.floating-celebration-nav {
+  border-color: rgba(178,138,66,.48);
+  background: rgba(255,250,240,.94);
+}
+.floating-celebration-nav a,.floating-celebration-nav button {
+  color: var(--derci-green);
+  border-color: rgba(53,69,51,.17);
+}
+.floating-celebration-nav a:hover,.floating-celebration-nav button:hover { background: #e9eadc; }
+.scroll-progress-track { background: rgba(53,69,51,.12); }
+.scroll-progress-track span { background: linear-gradient(90deg, #b28a42, #354533); }
+.primary-action { background: var(--derci-green); border-color: var(--derci-green); }
+.primary-action:hover { background: #263326; }
+.secondary-action,.share-action,.outline-action {
+  color: var(--derci-green);
+  border-color: rgba(178,138,66,.55);
+}
+.secondary-action:hover,.share-action:hover,.outline-action:hover { background: #f0eadc; }
+.rsvp-modal { border-color: rgba(178,138,66,.75); }
+.rsvp-modal h2 { color: var(--derci-dark-gold); }
+@media (max-width: 560px) {
+  .derci-page { padding: 0 0 26px; }
+  .invitation-shell { background: #fffdf7; }
+  .derci-section { background: rgba(255,250,240,.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .story-card,.gallery-cta,.gallery-secondary-cta,.floating-celebration-nav a,.floating-celebration-nav button { transition: none; }
+}
