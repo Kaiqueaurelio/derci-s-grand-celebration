@@ -1171,3 +1171,37 @@ html { scroll-behavior: smooth; scroll-padding-top: 28px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
+
+
+/* Art direction v3: quieter ornament, clearer hierarchy, less template-like repetition. */
+.birthday-confetti { display:none !important; }
+.invitation-shell { position:relative; isolation:isolate; overflow:hidden; }
+.invitation-shell::after { z-index:-1; }
+.invitation-shell > * { position:relative; z-index:1; }
+.invitation-shell .frame-line,
+.invitation-shell .corner { z-index:0; }
+.derci-page { overflow:clip; }
+.surprise { font-family:'Cormorant Garamond',Georgia,serif; font-style:italic; font-weight:500; letter-spacing:.015em; }
+.invitation-shell > .eyebrow { text-transform:uppercase; }
+.honoree { letter-spacing:-.015em; }
+.intro { max-width:480px; }
+.detail { padding-inline:14px; }
+.derci-section { text-align:center; }
+.section-eyebrow { font-size:10px; letter-spacing:.24em; }
+.derci-section h2, .derci-final-cta h2 { max-width:760px; margin-inline:auto; }
+.section-copy { max-width:620px; margin-inline:auto; }
+.story-card h3 { overflow-wrap:normal; }
+.memory-section { background:transparent; }
+.memory-emblem { display:grid; place-items:center; }
+.floating-celebration-nav { opacity:.82; transition:opacity .2s ease; }
+.floating-celebration-nav:hover { opacity:1; }
+.primary-action, .secondary-action, .gallery-cta, .gallery-secondary-cta { transition:transform .2s ease, background-color .2s ease, color .2s ease; }
+.primary-action:hover, .secondary-action:hover, .gallery-cta:hover, .gallery-secondary-cta:hover { transform:translateY(-2px); }
+button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offset:4px; }
+@media (max-width:640px) {
+  .invitation-shell::after { opacity:.75; }
+  .invitation-shell > * { max-width:100%; }
+  .event-details { gap:10px; }
+  .detail { padding-inline:2px; }
+  .floating-celebration-nav { opacity:.92; }
+}
