@@ -94,6 +94,9 @@ function InvitationPage() {
 
   return (
     <main className="derci-page">
+      <div className="birthday-confetti" aria-hidden="true">
+        {Array.from({ length: 18 }, (_, i) => <span key={i} className={"confetti-piece confetti-" + (i % 6)} />)}
+      </div>
       <div className="invitation-shell">
         <div className="corner corner-tl" aria-hidden="true">✿</div>
         <div className="corner corner-br" aria-hidden="true">✿</div>
