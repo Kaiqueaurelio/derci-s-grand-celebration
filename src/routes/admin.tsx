@@ -59,7 +59,7 @@ function AdminPage() {
     setSettingsSaving(true);setError("");setSettingsMessage("");
     try {
       await updateEventSettings({data:{
-        event_date:eventSettings.event_date,event_time:eventSettings.event_time,weekday_label:eventSettings.weekday_label,
+        honoree:eventSettings.honoree,event_date:eventSettings.event_date,event_time:eventSettings.event_time,weekday_label:eventSettings.weekday_label,
         location:eventSettings.location,maps_url:eventSettings.maps_url??"",rsvp_open:eventSettings.rsvp_open,
         phone_required:eventSettings.phone_required,max_companions:eventSettings.max_companions,
         gallery_enabled:eventSettings.gallery_enabled,gallery_access:eventSettings.gallery_access,
@@ -132,7 +132,8 @@ function AdminPage() {
     {activeTab==="settings"?<section className="admin-list-card event-settings-card">
       <div className="media-heading"><div><p className="modal-kicker">ÁREA ADMINISTRATIVA</p><h2><Settings size={22}/> Informações do evento</h2><p>As alterações são salvas no banco de dados e refletem nas partes do aplicativo que usam essas configurações.</p></div></div>
       {settingsBusy||!eventSettings?<p className="empty-message">{settingsBusy?"Carregando configurações...":"Clique em Configurações novamente se os dados não carregarem."}</p>:<form className="event-settings-form" onSubmit={saveSettings}>
-        <section className="settings-section"><h3><CalendarDays size={18}/> Data e local</h3>
+        <section className="settings-section"><h3><CalendarDays size={18}/> Identidade e data do evento</h3>
+          <label>Nome da pessoa homenageada<input required minLength={2} maxLength={120} value={eventSettings.honoree} onChange={e=>patchSettings({honoree:e.target.value})}/></label>
           <label>Data do evento<input type="date" required value={eventSettings.event_date} onChange={e=>patchSettings({event_date:e.target.value})}/></label>
           <label>Dia da semana exibido<input maxLength={30} value={eventSettings.weekday_label} onChange={e=>patchSettings({weekday_label:e.target.value})} placeholder="Ex.: Domingo"/></label>
           <label>Horário<input required maxLength={20} value={eventSettings.event_time} onChange={e=>patchSettings({event_time:e.target.value})} placeholder="Ex.: 12h às 18h"/></label>
