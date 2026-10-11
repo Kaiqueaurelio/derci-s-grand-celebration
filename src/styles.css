@@ -871,3 +871,37 @@ html { scroll-behavior:smooth; scroll-padding-top:28px; }
 @media(prefers-reduced-motion:reduce) {
   .scroll-reveal,.story-card,.primary-action,.secondary-action,.share-action { transition:none!important; }
 }
+
+
+/* A single intentional moment of celebration, triggered by the guest. */
+.little-celebration {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  margin:10px auto 0; padding:10px 14px;
+  border:0; border-bottom:1px solid #d9c9a8; background:transparent;
+  color:#8a744a; cursor:pointer; font:italic 16px 'Cormorant Garamond',Georgia,serif;
+  transition:color .2s ease,border-color .2s ease;
+}
+.little-celebration:hover { color:#51452f; border-color:#8a744a; }
+.little-celebration svg { width:14px;height:14px; }
+.little-celebration span { color:#b28a42; }
+.celebration-burst { position:fixed; z-index:300; inset:0; overflow:hidden; pointer-events:none; }
+.celebration-burst span {
+  position:absolute; left:50%; top:48%;
+  color:#a98a4e; font:24px Georgia,serif;
+  animation:derci-heart-burst 1.45s cubic-bezier(.15,.65,.25,1) both;
+  animation-delay:calc(var(--burst-index) * 12ms);
+}
+.celebration-burst span:nth-child(3n) { color:#718064; }
+.celebration-burst span:nth-child(3n + 1) { color:#b28a42; }
+@keyframes derci-heart-burst {
+  0% { opacity:0; transform:translate(-50%,-50%) scale(.25) rotate(0deg); }
+  12% { opacity:1; }
+  100% {
+    opacity:0;
+    transform:translate(calc(-50% + (var(--burst-index) - 9) * 13px), calc(-50% - 100px - (var(--burst-index) % 4) * 24px)) scale(1.1) rotate(calc(var(--burst-index) * 23deg));
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+ .celebration-burst { display:none; }
+ .little-celebration { transition:none; }
+}
