@@ -36,7 +36,8 @@ function InvitationPage() {
 
   useEffect(() => {
     const updateCountdown = () => {
-      const target = new Date(event.eventDate + "T13:00:00").getTime();
+      const eventTime = /^\d{2}:\d{2}$/.test(event.eventTime || "") ? event.eventTime : "13:00";
+      const target = new Date(`${event.eventDate}T${eventTime}:00`).getTime();
       const remaining = Math.max(0, target - Date.now());
       const totalSeconds = Math.floor(remaining / 1000);
       setCountdown({ days: Math.floor(totalSeconds / 86400), hours: Math.floor((totalSeconds % 86400) / 3600), minutes: Math.floor((totalSeconds % 3600) / 60), seconds: totalSeconds % 60 });
