@@ -125,7 +125,7 @@ function InvitationPage() {
                 {success.attending && <ul>{success.names.map((n, i) => <li key={i}>{n}</li>)}</ul>}
                 <p className="secret-reminder">Lembre-se: é surpresa! 🤫</p>
                 <button className="primary-action" onClick={() => setOpen(false)}>Concluir</button>
-                {success.attending && <button className="text-action" onClick={() => { navigator.clipboard.writeText(window.location.origin + "/confirmar/" + success.token).catch(()=>{}); }}>Copiar link seguro de edição</button>}
+                {success.attending && <button className="text-action" onClick={() => { const link = window.location.origin + "/confirmar/" + success.token; navigator.clipboard.writeText(link).then(() => window.alert("Link de edição copiado! Guarde-o para corrigir sua confirmação.")).catch(() => window.prompt("Copie e guarde seu link de edição:", link)); }}>Copiar link seguro de edição</button>}
               </div>
             ) : (
               <>
