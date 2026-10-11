@@ -1477,3 +1477,55 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .actions > a, .actions > button { padding: 12px 10px; font-size: 14px; }
   .admin-entry-link { padding: 10px 12px; }
 }
+
+
+/* Long-form invitation flow, gentle botanical motion and map affordance */
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+.derci-page { position: relative; isolation: isolate; }
+.derci-section, .derci-final-cta { scroll-margin-top: 24px; }
+.floating-petals {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.floating-petals .petal {
+  position: absolute;
+  top: -50px;
+  left: var(--petal-left, 10%);
+  width: 15px;
+  height: 23px;
+  border-radius: 90% 10% 85% 15%;
+  background: linear-gradient(145deg, rgba(178,138,66,.36), rgba(53,69,51,.2));
+  transform: rotate(35deg);
+  animation: petal-drift var(--petal-duration, 22s) linear infinite;
+  animation-delay: var(--petal-delay, 0s);
+}
+.floating-petals .petal-0 { --petal-left: 8%; --petal-duration: 25s; --petal-delay: -7s; }
+.floating-petals .petal-1 { --petal-left: 24%; --petal-duration: 31s; --petal-delay: -17s; width: 11px; height: 18px; }
+.floating-petals .petal-2 { --petal-left: 43%; --petal-duration: 27s; --petal-delay: -12s; }
+.floating-petals .petal-3 { --petal-left: 67%; --petal-duration: 33s; --petal-delay: -23s; width: 12px; height: 19px; }
+.floating-petals .petal-4 { --petal-left: 88%; --petal-duration: 29s; --petal-delay: -4s; }
+@keyframes petal-drift {
+  0% { transform: translate3d(0,-2vh,0) rotate(15deg); opacity: 0; }
+  8% { opacity: .65; }
+  45% { transform: translate3d(34px,48vh,0) rotate(180deg); }
+  88% { opacity: .42; }
+  100% { transform: translate3d(-18px,105vh,0) rotate(330deg); opacity: 0; }
+}
+.story-card a { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; }
+.secondary-action[href*="google.com/maps"], .story-card a[href*="google.com/maps"] {
+  touch-action: manipulation;
+}
+@media (max-width: 640px) {
+  .floating-petals .petal { width: 10px; height: 16px; }
+  .derci-section { padding-inline: clamp(18px, 5vw, 30px); }
+  .story-cards { grid-template-columns: minmax(0, 1fr); }
+  .story-card { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .floating-petals .petal { animation: none; display: none; }
+}
