@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getDashboard, getMyRole, saveGroup, deleteGroup, listAllMedia, moderateMedia, getDriveStatus, saveDriveFolder, testDriveConnection, retryDriveUploads, syncDriveFolder } from "@/lib/admin.functions";
-import { LogOut, Search, Users, CheckCircle2, Clock3, XCircle, Download, RefreshCw, Plus } from "lucide-react";
+import { getDashboard, getMyRole, saveGroup, deleteGroup, listAllMedia, moderateMedia, getDriveStatus, saveDriveFolder, testDriveConnection, retryDriveUploads, syncDriveFolder, askRsvpAssistant } from "@/lib/admin.functions";
+import { LogOut, Search, Users, CheckCircle2, Clock3, XCircle, Download, RefreshCw, Plus, Sparkles, Send, Bot } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ component: AdminPage });
 
@@ -30,6 +30,10 @@ function AdminPage() {
   const [mediaBusy,setMediaBusy]=useState(false);
   const [driveBusy,setDriveBusy]=useState(false);
   const [mediaFilter,setMediaFilter]=useState<"all"|"pending"|"approved">("all");
+  const [assistantQuestion,setAssistantQuestion]=useState("");
+  const [assistantAnswer,setAssistantAnswer]=useState("");
+  const [assistantBusy,setAssistantBusy]=useState(false);
+  const [assistantUpdatedAt,setAssistantUpdatedAt]=useState("");
 
   async function refresh(){
     setBusy(true);setError("");
@@ -82,6 +86,13 @@ function AdminPage() {
     catch(e){setError(e instanceof Error?e.message:"Falha ao reenviar arquivos.");}
     finally{setDriveBusy(false);}
   }
+  async function askAssistant(question=assistantQuestion){
+    const prompt=question.trim();if(prompt.length<3||assistantBusy)return;
+    setAssistantQuestion(prompt);setAssistantBusy(true);setAssistantAnswer("");setError("");
+    try{const result=await askRsvpAssistant({data:{question:prompt}});setAssistantAnswer(result.answer);setAssistantUpdatedAt(result.updatedAt);}
+    catch(e){setAssistantAnswer(e instanceof Error?e.message:"Não foi possível consultar as confirmações agora.");}
+    finally{setAssistantBusy(false);}
+  }
   function exportCsv(){const rows=[["Responsável","Nome completo","Status","Telefone","Check-in"]];for(const g of data?.groups??[]){for(const x of g.guests){rows.push([g.responsible_name,x.full_name,g.attending===true?"Confirmado":g.attending===false?"Não comparecerá":"Pendente",g.phone??"",x.checked_in_at?"Entrou":"Não entrou"]);}}const csv="\uFEFF"+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n");const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="lista-convidados-derci.csv";a.click();URL.revokeObjectURL(url);}
 
   const stats=data?.stats;
@@ -96,6 +107,17 @@ function AdminPage() {
       <article className="stat-card"><Clock3/><span>Pendentes</span><strong>{stats.pending}</strong></article>
       <article className="stat-card"><CheckCircle2/><span>Check-ins</span><strong>{stats.checkins}</strong></article>
     </section>}
+    <section className="admin-list-card rsvp-assistant-card" aria-labelledby="rsvp-assistant-title">
+      <div className="media-heading"><div><p className="modal-kicker">ASSISTENTE DA ORGANIZAÇÃO</p><h2 id="rsvp-assistant-title"><Sparkles size={21}/> Pergunte sobre as confirmações</h2><p>Respostas geradas com os dados mais recentes do evento. Telefones e observações privadas não são enviados à IA.</p></div><span className="assistant-mark"><Bot size={22}/></span></div>
+      <form className="assistant-question-form" onSubmit={e=>{e.preventDefault();void askAssistant();}}>
+        <label htmlFor="rsvp-assistant-question">Sua pergunta</label>
+        <div className="assistant-input-row"><input id="rsvp-assistant-question" value={assistantQuestion} onChange={e=>setAssistantQuestion(e.target.value)} maxLength={600} minLength={3} placeholder="Ex.: Quantas pessoas confirmaram e ainda não chegaram?" disabled={assistantBusy}/><button className="primary-action compact-action" type="submit" disabled={assistantBusy||assistantQuestion.trim().length<3}>{assistantBusy?<RefreshCw size={16} className="assistant-spin"/>:<Send size={16}/>} {assistantBusy?"Consultando...":"Perguntar"}</button></div>
+      </form>
+      <div className="assistant-suggestions" aria-label="Perguntas sugeridas">
+        {["Quantas pessoas confirmaram?","Quem ainda está pendente?","Quantas pessoas já fizeram check-in?","Quais grupos confirmados ainda não chegaram?"].map(q=><button key={q} type="button" className="filter-chip" disabled={assistantBusy} onClick={()=>void askAssistant(q)}>{q}</button>)}
+      </div>
+      {assistantAnswer&&<div className="assistant-answer" role="status"><div><Bot size={18}/><strong>Resposta do assistente</strong></div><p>{assistantAnswer}</p>{assistantUpdatedAt&&<small>Consulta realizada em {new Date(assistantUpdatedAt).toLocaleString("pt-BR")}</small>}</div>}
+    </section>
     <section className="admin-list-card">
       <div className="list-toolbar"><div className="search-field"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar responsável ou acompanhante..."/></div><button className="primary-action compact-action" onClick={newGroup}><Plus size={17}/> Adicionar convidado</button></div>
       {busy?<p className="empty-message">Carregando convidados...</p>:groups.length===0?<p className="empty-message">Nenhum convidado encontrado.</p>:<div className="guest-list">
