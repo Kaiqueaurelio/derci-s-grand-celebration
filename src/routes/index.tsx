@@ -57,7 +57,8 @@ function InvitationPage() {
     nodes.forEach(node => observer.observe(node));
     return () => observer.disconnect();
   }, []);
-  const mapUrl = event.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(event.location);
+  const mapAddress = event.location?.trim() || "Avenida Santa Marina, 1495, São Paulo, SP, Brasil";
+  const mapUrl = event.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(mapAddress.includes("Santa Marina") ? mapAddress + ", São Paulo, SP, Brasil" : mapAddress);
 
   const rsvpUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareUrl = useMemo(() => "https://wa.me/?text=" + encodeURIComponent("Você está convidado para os 80 anos da Dona Derci! " + rsvpUrl), [rsvpUrl]);
@@ -96,6 +97,7 @@ function InvitationPage() {
 
   return (
     <main className="derci-page">
+      <div className="floating-petals" aria-hidden="true">{Array.from({ length: 9 }, (_, i) => <span key={i} className={"petal petal-" + (i % 5)} />)}</div>
       <div className="birthday-confetti" aria-hidden="true">
         {Array.from({ length: 18 }, (_, i) => <span key={i} className={"confetti-piece confetti-" + (i % 6)} />)}
       </div>
