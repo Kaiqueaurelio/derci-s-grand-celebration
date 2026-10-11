@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Heart, UploadCloud, Image as ImageIcon, Video, X, LockKeyhole } from "lucide-react";
+import { ArrowLeft, Heart, UploadCloud, Image as ImageIcon, Video, X, LockKeyhole, ExternalLink } from "lucide-react";
 import { createUpload, finalizeUpload, getGallery } from "@/lib/gallery.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -50,7 +50,7 @@ function GalleryPage(){
  }
 
  return <main className="derci-page gallery-page">
-  <header className="gallery-header"><a className="secondary-action gallery-back" href="/"><ArrowLeft size={16}/> Voltar ao convite</a><p className="modal-kicker">DONA DERCI · 80 ANOS</p><h1>Memórias da festa</h1><p>Compartilhe fotografias e vídeos para guardar esse dia especial.</p></header>
+  <header className="gallery-header"><a className="secondary-action gallery-back" href="/"><ArrowLeft size={16}/> Voltar ao convite</a><p className="modal-kicker">DONA DERCI · 80 ANOS</p><h1>Memórias da festa</h1><p>Compartilhe fotografias e vídeos para guardar esse dia especial.</p><a className="gallery-cta drive-gallery-link" href="https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing" target="_blank" rel="noreferrer"><ImageIcon size={18}/> Ver todas as fotos no Google Drive <ExternalLink size={16}/></a></header>
   {needCode?<section className="rsvp-modal gallery-code-card"><LockKeyhole size={28}/><h2>Álbum da família</h2><p>Digite o código de acesso que a organização compartilhou com você.</p><form onSubmit={unlock}><label>Código de acesso<input value={codeInput} onChange={e=>setCodeInput(e.target.value)} required autoComplete="current-password"/></label><button className="primary-action">Acessar álbum</button></form></section>:null}
   {error&&!needCode&&<p className="form-error gallery-error" role="alert">{error}</p>}
   {requiresAuth&&<button className="primary-action" onClick={async()=>{const {data}=await supabase.auth.getSession();if(!data.session){window.location.href="/entrar";return;}await refresh();}}>Entrar para ver álbum</button>}
