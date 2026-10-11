@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, Clock3, MapPin, Heart, LockKeyhole, Wine, Users, CheckCircle2, ArrowRight, Share2, ChevronDown, Camera, Sparkles, Flower2, PartyPopper } from "lucide-react";
+import { CalendarDays, Clock3, MapPin, Heart, LockKeyhole, Wine, Users, CheckCircle2, ArrowRight, Share2, ChevronDown, Camera, Sparkles, Flower2, PartyPopper, UploadCloud } from "lucide-react";
 import { getPublicEvent, submitRsvp } from "@/lib/rsvp.functions";
 
 export const Route = createFileRoute("/")({
