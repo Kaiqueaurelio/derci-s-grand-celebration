@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { IMAGE_TYPES, VIDEO_TYPES } from "./text";
+import { validateGalleryUpload } from "./workflow-rules";
 
 const S = () => import("./server/core.server");
 
@@ -84,12 +84,10 @@ export const createUpload = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const ev = await assertGalleryAccess(data.code);
     if (!ev.uploads_enabled) throw new Error("O envio de arquivos está pausado pela organização.");
-    const mime = data.mimeType.toLowerCase();
-    const isImage = IMAGE_TYPES.includes(mime);
-    const isVideo = VIDEO_TYPES.includes(mime);
-    if (!isImage && !isVideo) throw new Error("Formato não aceito. Envie JPEG, PNG, WebP, HEIC, MP4 ou MOV.");
-    const maxMb = isVideo ? ev.max_video_mb : ev.max_image_mb;
-    if (data.size > maxMb * 1024 * 1024) throw new Error(`Arquivo maior que ${maxMb} MB.`);
+    const upload = validateGalleryUpload(data.mimeType, data.size, ev.max_image_mb, ev.max_video_mb);
+    const mime = upload.mime;
+    const isImage = upload.kind === "image";
+    const isVideo = upload.kind === "video";
 
     const { admin, requestFingerprint } = await S();
     const db = await admin();
