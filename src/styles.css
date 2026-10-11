@@ -582,3 +582,20 @@ html { scroll-behavior:smooth; scroll-padding-top:28px; }
  .scroll-reveal { opacity:1; transform:none; transition:none; }
  .scroll-cue svg { animation:none; }
 }
+
+/* Shared Google Drive album links */
+.gallery-secondary-cta {
+ display:flex; width:max-content; max-width:100%; margin:14px auto 0;
+ align-items:center; justify-content:center; gap:9px; padding:12px 18px;
+ color:#79551f; background:rgba(255,250,240,.72);
+ border:1px solid rgba(178,138,66,.55); text-decoration:none;
+ font:600 12px Arial,sans-serif; box-sizing:border-box;
+ transition:background .2s ease,transform .2s ease;
+}
+.gallery-secondary-cta:hover { background:#f0e1c3; transform:translateY(-2px); }
+.drive-gallery-link { margin-top:18px; }
+.gallery-header .drive-gallery-link { display:inline-flex; }
+@media(max-width:480px) {
+ .gallery-secondary-cta { width:100%; }
+ .drive-gallery-link { width:100%; }
+}
