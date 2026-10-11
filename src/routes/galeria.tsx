@@ -29,6 +29,33 @@ function GalleryPage(){
  }
 
  useEffect(()=>{void refresh();},[]);
+ useEffect(()=>{
+  if(!selected)return;
+  const previousActive=document.activeElement instanceof HTMLElement?document.activeElement:null;
+  const previousOverflow=document.body.style.overflow;
+  document.body.style.overflow="hidden";
+  const focusFrame=window.requestAnimationFrame(()=>document.querySelector<HTMLElement>(".gallery-lightbox .modal-close")?.focus());
+  const selector='a[href],button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),video[controls],[tabindex]:not([tabindex="-1"])';
+  const onKeyDown=(e:KeyboardEvent)=>{
+   if(e.key==="Escape"){e.preventDefault();setSelected(null);return;}
+   if(e.key!=="Tab")return;
+   const dialog=document.querySelector<HTMLElement>(".gallery-lightbox .gallery-viewer");
+   if(!dialog)return;
+   const items=Array.from(dialog.querySelectorAll<HTMLElement>(selector)).filter(el=>el.getClientRects().length>0);
+   const first=items[0],last=items[items.length-1];
+   if(!first||!last){e.preventDefault();return;}
+   if(!dialog.contains(document.activeElement)){e.preventDefault();(e.shiftKey?last:first).focus();}
+   else if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  };
+  document.addEventListener("keydown",onKeyDown);
+  return()=>{
+   window.cancelAnimationFrame(focusFrame);
+   document.removeEventListener("keydown",onKeyDown);
+   document.body.style.overflow=previousOverflow;
+   if(previousActive?.isConnected)previousActive.focus();
+  };
+ },[selected]);
  async function unlock(e:React.FormEvent){e.preventDefault();setCode(codeInput.trim());await refresh(codeInput.trim());}
  async function uploadFiles(fileList:FileList|null){
   if(!fileList?.length)return;
@@ -58,6 +85,6 @@ function GalleryPage(){
    <section className="upload-panel"><div className="upload-icon"><UploadCloud size={26}/></div><div className="upload-copy"><h2>Compartilhe suas fotos e vídeos</h2><p>Selecione arquivos do celular ou computador. Imagens e vídeos ajudam a contar essa história.</p></div><label className="primary-action upload-button"><input type="file" multiple accept="image/jpeg,image/png,image/webp,image/heic,video/mp4,video/quicktime" onChange={e=>{void uploadFiles(e.target.files);e.currentTarget.value="";}} disabled={!uploadsEnabled||busy} hidden/><UploadCloud size={17}/>{busy?"Enviando...":"Selecionar arquivos"}</label>{uploading.map(n=><p className="uploading-item" key={n}>Enviando: {n}</p>)}{message&&<p className="upload-success">{message}</p>}{error&&<p className="form-error">{error}</p>}{!uploadsEnabled&&<p className="privacy-note">Envios temporariamente desativados.</p>}<label className="uploader-name">Seu nome (opcional)<input value={uploader} onChange={e=>setUploader(e.target.value)} maxLength={80} placeholder="Como devemos identificar você?"/></label></section>
    <section className="gallery-grid-section"><div className="gallery-section-heading"><div><h2>Momentos compartilhados</h2><p>{items.length} arquivo(s) aprovado(s)</p></div><button className="outline-action" onClick={()=>void refresh()}><Heart size={15}/> Atualizar</button></div>{items.length===0?<div className="gallery-empty"><ImageIcon size={34}/><p>As primeiras memórias aparecerão aqui assim que forem enviadas e aprovadas.</p></div>:<div className="gallery-grid">{items.map(item=><button className="gallery-tile" key={item.id} onClick={()=>setSelected(item)} aria-label={"Abrir "+item.name}>{item.kind==="image"?<img src={item.url} alt={item.name} loading="lazy"/>:<div className="video-tile"><Video size={32}/><span>Vídeo</span></div>}<span className="tile-caption">{item.name}</span></button>)}</div>}</section>
   </>}
-  {selected&&<div className="modal-backdrop gallery-lightbox" onMouseDown={e=>{if(e.target===e.currentTarget)setSelected(null)}}><section className="gallery-viewer" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setSelected(null)} aria-label="Fechar">×</button>{selected.kind==="image"?<img src={selected.url} alt={selected.name}/>:<video src={selected.url} controls playsInline/>}<p>{selected.name}</p><a className="primary-action gallery-download-action" href={selected.downloadUrl} download={selected.name}><Download size={16}/> Baixar arquivo</a></section></div>}
+  {selected&&<div className="modal-backdrop gallery-lightbox" onMouseDown={e=>{if(e.target===e.currentTarget)setSelected(null)}}><section className="gallery-viewer" role="dialog" aria-modal="true" aria-labelledby="gallery-viewer-title" tabIndex={-1}><button className="modal-close" onClick={()=>setSelected(null)} aria-label="Fechar">×</button>{selected.kind==="image"?<img src={selected.url} alt={selected.name}/>:<video src={selected.url} controls playsInline/>}<p id="gallery-viewer-title">{selected.name}</p><a className="primary-action gallery-download-action" href={selected.downloadUrl} download={selected.name}><Download size={16}/> Baixar arquivo</a></section></div>}
  </main>;
 }
