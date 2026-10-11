@@ -63,11 +63,19 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
+  '/galeria': typeof GaleriaRoute
+  '/entrar': typeof EntrarRoute
+  '/admin': typeof AdminRoute
+  '/portaria': typeof PortariaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
+  '/galeria': typeof GaleriaRoute
+  '/entrar': typeof EntrarRoute
+  '/admin': typeof AdminRoute
+  '/portaria': typeof PortariaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
