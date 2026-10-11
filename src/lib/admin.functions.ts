@@ -201,6 +201,7 @@ export const updateEventSettings = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
       .object({
+        honoree: z.string().trim().min(2).max(120),
         event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
         event_time: z.string().min(1).max(20),
         weekday_label: z.string().max(30),
@@ -225,7 +226,7 @@ export const updateEventSettings = createServerFn({ method: "POST" })
     await assertRole(context.supabase, context.userId, ["admin"]);
     const ev = await getEvent();
     const { gallery_code, ...rest } = data;
-    const patch: Record<string, unknown> = { ...rest, maps_url: rest.maps_url || null, updated_at: new Date().toISOString() };
+    const patch: Record<string, unknown> = { ...rest, honoree: data.honoree, maps_url: rest.maps_url || null, updated_at: new Date().toISOString() };
     if (gallery_code && gallery_code.trim()) patch.gallery_code_hash = await sha256(`gallery:${gallery_code.trim().toLowerCase()}`);
     if (data.gallery_access === "code" && !ev.gallery_code_hash && !patch.gallery_code_hash)
       throw new Error("Defina um código para a galeria.");
