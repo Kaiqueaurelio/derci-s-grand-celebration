@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { getDashboard, getMyRole, saveGroup, deleteGroup, listAllMedia, moderateMedia, getDriveStatus, saveDriveFolder, testDriveConnection, retryDriveUploads, syncDriveFolder, askRsvpAssistant } from "@/lib/admin.functions";
-import { LogOut, Search, Users, CheckCircle2, Clock3, XCircle, Download, RefreshCw, Plus, Sparkles, Send, Bot } from "lucide-react";
+import { getDashboard, getMyRole, saveGroup, deleteGroup, listAllMedia, moderateMedia, getDriveStatus, saveDriveFolder, testDriveConnection, retryDriveUploads, syncDriveFolder, askRsvpAssistant, getEventSettings, updateEventSettings } from "@/lib/admin.functions";
+import { LogOut, Search, Users, CheckCircle2, Clock3, XCircle, Download, RefreshCw, Plus, Sparkles, Send, Bot, Settings, CalendarDays, MapPin, Image, Save, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ component: AdminPage });
 
@@ -10,6 +10,7 @@ type Dashboard = Awaited<ReturnType<typeof getDashboard>>;
 type GuestGroup = Dashboard["groups"][number];
 type MediaItem = Awaited<ReturnType<typeof listAllMedia>>[number];
 type DriveInfo = Awaited<ReturnType<typeof getDriveStatus>>;
+type EventSettings = Awaited<ReturnType<typeof getEventSettings>>;
 
 function AdminPage() {
   const navigate=useNavigate();
@@ -34,6 +35,12 @@ function AdminPage() {
   const [assistantAnswer,setAssistantAnswer]=useState("");
   const [assistantBusy,setAssistantBusy]=useState(false);
   const [assistantUpdatedAt,setAssistantUpdatedAt]=useState("");
+  const [activeTab,setActiveTab]=useState<"overview"|"settings">("overview");
+  const [eventSettings,setEventSettings]=useState<EventSettings|null>(null);
+  const [settingsBusy,setSettingsBusy]=useState(false);
+  const [settingsSaving,setSettingsSaving]=useState(false);
+  const [galleryCode,setGalleryCode]=useState("");
+  const [settingsMessage,setSettingsMessage]=useState("");
 
   async function refresh(){
     setBusy(true);setError("");
@@ -41,6 +48,29 @@ function AdminPage() {
     catch(e){setError(e instanceof Error?e.message:"Falha ao carregar painel.");}
     finally{setBusy(false);}
   }
+  async function loadSettings(){
+    setSettingsBusy(true);setError("");setSettingsMessage("");
+    try { setEventSettings(await getEventSettings()); }
+    catch(e){setError(e instanceof Error?e.message:"Falha ao carregar configurações.");}
+    finally{setSettingsBusy(false);}
+  }
+  async function saveSettings(e:React.FormEvent){
+    e.preventDefault();if(!eventSettings||settingsSaving)return;
+    setSettingsSaving(true);setError("");setSettingsMessage("");
+    try {
+      await updateEventSettings({data:{
+        event_date:eventSettings.event_date,event_time:eventSettings.event_time,weekday_label:eventSettings.weekday_label,
+        location:eventSettings.location,maps_url:eventSettings.maps_url??"",rsvp_open:eventSettings.rsvp_open,
+        phone_required:eventSettings.phone_required,max_companions:eventSettings.max_companions,
+        gallery_enabled:eventSettings.gallery_enabled,gallery_access:eventSettings.gallery_access,
+        gallery_code:galleryCode,moderation_required:eventSettings.moderation_required,uploads_enabled:eventSettings.uploads_enabled,
+        max_image_mb:eventSettings.max_image_mb,max_video_mb:eventSettings.max_video_mb,uploads_per_hour:eventSettings.uploads_per_hour,
+      }});
+      setGalleryCode("");setSettingsMessage("Configurações salvas com sucesso.");setEventSettings(await getEventSettings());
+    } catch(e){setError(e instanceof Error?e.message:"Falha ao salvar configurações.");}
+    finally{setSettingsSaving(false);}
+  }
+  function patchSettings(patch:Partial<EventSettings>){setEventSettings(old=>old?{...old,...patch}:old);}
   async function refreshMedia(){
     setMediaBusy(true);
     try { setMedia(await listAllMedia()); setDrive(await getDriveStatus()); }
@@ -97,8 +127,36 @@ function AdminPage() {
 
   const stats=data?.stats;
   return <main className="derci-page admin-page">
-    <header className="admin-header"><div><p className="modal-kicker">DONA DERCI · 80 ANOS</p><h1>Painel de convidados</h1><p>Lista de presença e controle da celebração.</p></div><div className="admin-header-actions"><button className="outline-action" onClick={()=>void refresh()}><RefreshCw size={16}/> Atualizar</button><button className="outline-action" onClick={exportCsv}><Download size={16}/> Exportar CSV</button><button className="outline-action" onClick={signOut}><LogOut size={16}/> Sair</button></div></header>
+    <header className="admin-header"><div><p className="modal-kicker">DONA DERCI · 80 ANOS</p><h1>{activeTab==="settings"?"Configurações do evento":"Painel de convidados"}</h1><p>{activeTab==="settings"?"Edite as informações públicas e as regras do aplicativo.":"Lista de presença e controle da celebração."}</p></div><div className="admin-header-actions">{activeTab==="settings"&&<button className="outline-action" onClick={()=>setActiveTab("overview")}><ArrowLeft size={16}/> Voltar ao painel</button>}{activeTab==="overview"&&<><button className="outline-action" onClick={()=>void refresh()}><RefreshCw size={16}/> Atualizar</button><button className="outline-action" onClick={()=>void loadSettings()}><Settings size={16}/> Configurações</button><button className="outline-action" onClick={exportCsv}><Download size={16}/> Exportar CSV</button></>}<button className="outline-action" onClick={signOut}><LogOut size={16}/> Sair</button></div></header>
     {error&&<p className="form-error" role="alert">{error}</p>}
+    {activeTab==="settings"?<section className="admin-list-card event-settings-card">
+      <div className="media-heading"><div><p className="modal-kicker">ÁREA ADMINISTRATIVA</p><h2><Settings size={22}/> Informações do evento</h2><p>As alterações são salvas no banco de dados e refletem nas partes do aplicativo que usam essas configurações.</p></div></div>
+      {settingsBusy||!eventSettings?<p className="empty-message">{settingsBusy?"Carregando configurações...":"Clique em Configurações novamente se os dados não carregarem."}</p>:<form className="event-settings-form" onSubmit={saveSettings}>
+        <section className="settings-section"><h3><CalendarDays size={18}/> Data e local</h3>
+          <label>Data do evento<input type="date" required value={eventSettings.event_date} onChange={e=>patchSettings({event_date:e.target.value})}/></label>
+          <label>Dia da semana exibido<input maxLength={30} value={eventSettings.weekday_label} onChange={e=>patchSettings({weekday_label:e.target.value})} placeholder="Ex.: Domingo"/></label>
+          <label>Horário<input required maxLength={20} value={eventSettings.event_time} onChange={e=>patchSettings({event_time:e.target.value})} placeholder="Ex.: 12h às 18h"/></label>
+          <label><MapPin size={16}/> Endereço/local<input required minLength={3} maxLength={200} value={eventSettings.location} onChange={e=>patchSettings({location:e.target.value})}/></label>
+          <label>Link do Google Maps<input type="url" value={eventSettings.maps_url??""} onChange={e=>patchSettings({maps_url:e.target.value})} placeholder="https://maps.google.com/..."/></label>
+        </section>
+        <section className="settings-section"><h3><Users size={18}/> Confirmação de presença</h3>
+          <label className="settings-toggle"><input type="checkbox" checked={eventSettings.rsvp_open} onChange={e=>patchSettings({rsvp_open:e.target.checked})}/> Aceitar novas confirmações</label>
+          <label className="settings-toggle"><input type="checkbox" checked={eventSettings.phone_required} onChange={e=>patchSettings({phone_required:e.target.checked})}/> Exigir telefone/WhatsApp</label>
+          <label>Máximo de acompanhantes por grupo<input type="number" min={0} max={30} required value={eventSettings.max_companions} onChange={e=>patchSettings({max_companions:Number(e.target.value)})}/></label>
+        </section>
+        <section className="settings-section"><h3><Image size={18}/> Galeria de fotos e vídeos</h3>
+          <label className="settings-toggle"><input type="checkbox" checked={eventSettings.gallery_enabled} onChange={e=>patchSettings({gallery_enabled:e.target.checked})}/> Habilitar galeria</label>
+          <label className="settings-toggle"><input type="checkbox" checked={eventSettings.uploads_enabled} onChange={e=>patchSettings({uploads_enabled:e.target.checked})}/> Permitir novos envios</label>
+          <label className="settings-toggle"><input type="checkbox" checked={eventSettings.moderation_required} onChange={e=>patchSettings({moderation_required:e.target.checked})}/> Exigir aprovação do administrador antes de publicar</label>
+          <label>Acesso à galeria<select value={eventSettings.gallery_access} onChange={e=>patchSettings({gallery_access:e.target.value as EventSettings["gallery_access"]})}><option value="link">Qualquer pessoa com o link</option><option value="code">Código de acesso</option><option value="auth">Somente usuários autenticados</option></select></label>
+          {eventSettings.gallery_access==="code"&&<label>{eventSettings.hasGalleryCode?"Definir novo código (deixe vazio para manter o atual)":"Código de acesso da galeria"}<input type="password" autoComplete="new-password" maxLength={40} value={galleryCode} onChange={e=>setGalleryCode(e.target.value)} placeholder="Digite um código novo" required={!eventSettings.hasGalleryCode}/></label>}
+          <div className="settings-number-grid"><label>Limite por foto (MB)<input type="number" min={1} max={100} required value={eventSettings.max_image_mb} onChange={e=>patchSettings({max_image_mb:Number(e.target.value)})}/></label><label>Limite por vídeo (MB)<input type="number" min={1} max={100} required value={eventSettings.max_video_mb} onChange={e=>patchSettings({max_video_mb:Number(e.target.value)})}/></label><label>Envios por hora/IP<input type="number" min={1} max={1000} required value={eventSettings.uploads_per_hour} onChange={e=>patchSettings({uploads_per_hour:Number(e.target.value)})}/></label></div>
+        </section>
+        {settingsMessage&&<p className="success-note" role="status">{settingsMessage}</p>}
+        <button className="primary-action settings-save" type="submit" disabled={settingsSaving}><Save size={17}/>{settingsSaving?"Salvando...":"Salvar configurações"}</button>
+        <p className="privacy-note">Somente administradores autenticados podem alterar essas informações. O código da galeria nunca é exibido de volta na tela.</p>
+      </form>}
+    </section>:<>
     {stats&&<section className="stats-grid">
       <article className="stat-card"><CheckCircle2/><span>Pessoas confirmadas</span><strong>{stats.confirmed}</strong></article>
       <article className="stat-card"><Users/><span>Responsáveis</span><strong>{stats.responsibles}</strong></article>
@@ -150,6 +208,7 @@ function AdminPage() {
       <div className="drive-actions"><button className="outline-action" disabled={driveBusy||!drive?.settings?.folder_id} onClick={()=>void testDrive()}><CheckCircle2 size={16}/> Testar conexão</button><button className="outline-action" disabled={driveBusy||!drive?.settings?.folder_id} onClick={()=>void syncDrive()}><RefreshCw size={16}/> Sincronizar arquivos do Drive</button><button className="outline-action" disabled={driveBusy} onClick={()=>void retryDrive()}><RefreshCw size={16}/> Tentar envios pendentes</button></div>
       <p className="privacy-note">A integração depende das credenciais seguras configuradas no backend. Nenhuma credencial é exibida nesta página.</p>
     </section>
+    </>}
     {showForm&&<div className="modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setShowForm(false)}}><section className="rsvp-modal edit-modal" role="dialog" aria-modal="true"><button className="modal-close" onClick={()=>setShowForm(false)}>×</button><h2>{editing?"Editar grupo":"Adicionar convidado"}</h2><form onSubmit={save}><label>Responsável<input required minLength={3} value={name} onChange={e=>setName(e.target.value)}/></label><label>WhatsApp<input value={phone} onChange={e=>setPhone(e.target.value)}/></label><fieldset><legend>Status</legend><label className="radio-label"><input type="radio" checked={attending==="yes"} onChange={()=>setAttending("yes")}/> Confirmado</label><label className="radio-label"><input type="radio" checked={attending==="pending"} onChange={()=>setAttending("pending")}/> Pendente</label><label className="radio-label"><input type="radio" checked={attending==="no"} onChange={()=>setAttending("no")}/> Não comparecerá</label></fieldset>{attending!=="no"&&<div className="companions"><div className="companions-heading"><Users size={18}/> Acompanhantes</div>{companions.map((n,i)=><div className="companion-row" key={i}><input required value={n} onChange={e=>setCompanions(old=>old.map((v,j)=>i===j?e.target.value:v))} placeholder="Nome completo"/><button type="button" onClick={()=>setCompanions(old=>old.filter((_,j)=>i!==j))}>×</button></div>)}{companions.length<30&&<button type="button" className="add-companion" onClick={()=>setCompanions(old=>[...old,""])}>+ Adicionar acompanhante</button>}</div>}<label>Observações<textarea value={notes} onChange={e=>setNotes(e.target.value)}/></label><button className="primary-action submit-action">Salvar convidado</button></form></section></div>}
   </main>;
 }
