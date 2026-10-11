@@ -149,6 +149,7 @@ function InvitationPage() {
           <a className="secondary-action" href={mapUrl} target="_blank" rel="noreferrer"><MapPin size={17}/> Ver localização</a>
           <button className="share-action" onClick={shareInvitation}><Share2 size={16}/> {copied ? "Convite copiado!" : "Compartilhar convite"}</button>
           {event.galleryEnabled && <a className="secondary-action" href="/galeria"><Heart size={17}/> Ver álbum de memórias</a>}
+          <a className="admin-entry-link" href="/entrar"><LockKeyhole size={16} aria-hidden="true"/> Acesso da organização</a>
         </div>
 
         <button className="little-celebration" type="button" onClick={() => setCelebrationBurst(true)}><Sparkles size={15}/> Celebrar esse amor <span>♡</span></button>
