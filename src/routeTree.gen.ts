@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConfirmarTokenRouteImport } from './routes/confirmar.$token'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as PortariaRouteImport } from './routes/portaria'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,10 +34,31 @@ const GaleriaRoute = GaleriaRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+const PortariaRoute = PortariaRouteImport.update({
+  id: '/portaria',
+  path: '/portaria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
   '/galeria': typeof GaleriaRoute
+  '/entrar': typeof EntrarRoute
+  '/admin': typeof AdminRoute
+  '/portaria': typeof PortariaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -47,16 +71,19 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/confirmar/$token' | '/galeria'
+  fullPaths: '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/confirmar/$token' | '/galeria'
-  id: '__root__' | '/' | '/confirmar/$token' | '/galeria'
+  to: '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
+  id: '__root__' | '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConfirmarTokenRoute: typeof ConfirmarTokenRoute
   GaleriaRoute: typeof GaleriaRoute
+  EntrarRoute: typeof EntrarRoute
+  AdminRoute: typeof AdminRoute
+  PortariaRoute: typeof PortariaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +109,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portaria': {
+      id: '/portaria'
+      path: '/portaria'
+      fullPath: '/portaria'
+      preLoaderRoute: typeof PortariaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +137,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConfirmarTokenRoute: ConfirmarTokenRoute,
   GaleriaRoute: GaleriaRoute,
+  EntrarRoute: EntrarRoute,
+  AdminRoute: AdminRoute,
+  PortariaRoute: PortariaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
