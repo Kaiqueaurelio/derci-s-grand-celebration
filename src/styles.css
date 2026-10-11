@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&display=swap');
+
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -142,8 +144,6 @@
     color: var(--color-foreground);
   }
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&display=swap');
 
 :root {
   --derci-cream: #f7eedf;
