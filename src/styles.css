@@ -1376,3 +1376,47 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
 @media (max-width: 480px) {
   .gallery-viewer .gallery-download-action { width: 100%; }
 }
+
+
+/* Invitation fidelity + accessibility polish */
+.invitation-shell { background: #fffaf0; color: #29251f; }
+.surprise, .honoree, .closing, .bring-drink { color: #79551f; }
+.age { color: #9a702b; }
+.intro, .secret-note p, .detail strong, .detail-label { color: #29251f; }
+.detail svg, .secret-note svg, .bring-drink svg { color: #79551f; stroke: currentColor; }
+.footer-note { color: #5f513c; }
+.primary-action { background: #79551f; color: #fffaf0; }
+.primary-action:focus-visible, .secondary-action:focus-visible, .share-action:focus-visible,
+.little-celebration:focus-visible, .scroll-cue:focus-visible {
+  outline: 3px solid #354533; outline-offset: 3px;
+}
+.secondary-action { color: #684819; border-color: #9a702b; background: #fffaf0; }
+.share-action { color: #29251f; }
+.bring-drink { border-radius: 2px; }
+.detail { overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .invitation-shell { padding: 28px 20px 24px; }
+  .eyebrow { letter-spacing: .12em; line-height: 1.4; }
+  .age { font-size: clamp(64px, 19vw, 100px); white-space: normal; }
+  .honoree { font-size: clamp(62px, 18vw, 96px); overflow-wrap: anywhere; }
+  .event-details { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+  .detail { padding: 0 5px; }
+  .detail + .detail { border-left: 1px solid #b28a42; }
+  .detail strong { font-size: clamp(14px, 4vw, 17px); }
+  .detail .location { font-size: clamp(12px, 3.5vw, 15px); }
+  .detail-label { font-size: 10px; letter-spacing: .08em; }
+  .detail small { font-size: 11px; }
+  .secret-note { align-items: flex-start; }
+  .secret-note > div { min-width: 0; }
+  .secret-note p { line-height: 1.45; }
+  .bring-drink { gap: 10px; }
+  .bring-drink p { font-size: clamp(28px, 8vw, 40px); }
+}
+@media (max-width: 360px) {
+  .invitation-shell { padding-left: 16px; padding-right: 16px; }
+  .event-details { margin-left: -10px; margin-right: -10px; }
+  .detail svg { width: 24px; height: 24px; }
+  .detail-label { font-size: 9px; }
+  .detail strong { font-size: 13px; }
+  .detail .location { font-size: 11px; }
+}
