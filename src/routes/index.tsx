@@ -109,7 +109,7 @@ function InvitationPage() {
         <p className="eyebrow beloved">DA NOSSA QUERIDA</p>
         <h1 className="honoree">{event.honoree || "Derci"}<span>♡</span></h1>
 
-        <p className="intro">Essa data tão especial merece ser comemorada ao lado de pessoas que fazem parte da sua história! Contamos com a sua presença para tornar esse momento ainda mais inesquecível!</p>
+        <p className="intro">O melhor presente é ter por perto quem faz parte da nossa vida. Venha comemorar com a gente esse capítulo tão bonito da história da Derci.</p>
 
         <section className="event-details" aria-label="Informações da festa">
           <div className="detail">
@@ -163,7 +163,7 @@ function InvitationPage() {
         <div className="botanical-mark" aria-hidden="true"><Flower2 size={28}/><span>✦</span><Flower2 size={20}/></div>
         <p className="section-eyebrow">UMA VIDA INTEIRA DE HISTÓRIAS</p>
         <h2>O amor merece ser celebrado.</h2>
-        <p className="section-copy">São 80 anos de lembranças, encontros, abraços e histórias que fazem parte de tantas vidas. Vamos nos reunir para criar mais uma memória bonita ao lado da nossa querida Derci.</p>
+        <p className="section-copy">Oito décadas não cabem em uma página. Cabem nos encontros, nas conversas que atravessam a tarde e no carinho de quem caminhou ao lado dela. Agora, é hora de estarmos juntos para celebrar.</p>
         <div className="countdown-card">
           <div className="countdown-title"><Sparkles size={17}/> A contagem regressiva começou <Sparkles size={17}/></div>
           <div className="countdown-units" aria-label="Tempo restante até a festa">
@@ -191,7 +191,7 @@ function InvitationPage() {
         <LockKeyhole size={29}/>
         <p className="section-eyebrow">PSIU... É SURPRESA!</p>
         <h2>Vamos guardar esse segredo?</h2>
-        <p className="section-copy">A maior alegria vai ser ver a reação da Derci. Por isso, não conte nada para ela e evite publicar sobre a festa antes da hora. Nosso segredo deixa esse momento ainda mais especial.</p>
+        <p className="section-copy">Vamos fazer essa surpresa valer a pena: não conte nada à Derci e evite publicar sobre a festa antes do dia. Na hora certa, queremos ver o sorriso dela ao encontrar todo mundo.</p>
         <span className="secret-signature">Combinado? ♡</span>
       </section>
 
@@ -199,7 +199,7 @@ function InvitationPage() {
         <div className="memory-emblem"><Camera size={30}/></div>
         <p className="section-eyebrow">CADA CLIQUE VIRA MEMÓRIA</p>
         <h2>Vamos guardar esse dia para sempre.</h2>
-        <p className="section-copy">Depois da festa, este cantinho será o lugar para rever os sorrisos, os abraços e os momentos que fizeram o dia ser inesquecível.</p>
+        <p className="section-copy">Depois da comemoração, volte aqui para rever os registros desse encontro. Cada foto vai ajudar a guardar um pedacinho desse dia.</p>
         <div className="memory-ribbon"><span>momentos</span><span>♡</span><span>memórias</span><span>♡</span><span>família</span></div>
         <a className="gallery-cta" href="https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing" target="_blank" rel="noreferrer"><Camera size={18}/> Ver fotos e vídeos no Google Drive <ArrowRight size={17}/></a>
         {event.galleryEnabled && <a className="gallery-secondary-cta" href="/galeria"><UploadCloud size={17}/> Enviar fotos para compartilhar</a>}
@@ -208,7 +208,7 @@ function InvitationPage() {
       <section className="derci-final-cta scroll-reveal">
         <PartyPopper size={27}/>
         <p className="section-eyebrow">SUA PRESENÇA É O NOSSO PRESENTE</p>
-        <h2>Você vem comemorar com a gente?</h2>
+        <h2>Vamos brindar aos 80 anos da Derci?</h2>
         <p>Confirme sua presença e informe os nomes de todos que vão com você para prepararmos a lista da portaria.</p>
         <button className="primary-action final-confirm-button" onClick={() => { setOpen(true); setSuccess(null); }}><Heart size={18}/> Confirmar minha presença <ArrowRight size={18}/></button>
         <a className="final-share-link" href={shareUrl}><Share2 size={16}/> Compartilhar convite com a família</a>
@@ -238,7 +238,7 @@ function InvitationPage() {
               <>
                 <p className="modal-kicker">80 ANOS DE AMOR</p>
                 <h2 id="rsvp-title">Confirme sua presença</h2>
-                <p className="modal-subtitle">Precisamos dos nomes completos para liberar a entrada na portaria.</p>
+                <p className="modal-subtitle">Informe seu nome e o de quem vai com você para deixarmos tudo organizado na entrada.</p>
                 <form onSubmit={submit}>
                   <label>Seu nome completo<input required minLength={3} value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome e sobrenome" autoComplete="name"/></label>
                   <label>WhatsApp <span className="optional">(opcional)</span><input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="DDD + telefone" autoComplete="tel" inputMode="tel"/></label>
