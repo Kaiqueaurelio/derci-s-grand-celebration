@@ -7,7 +7,6 @@ import {
   Image as ImageIcon,
   Video,
   LockKeyhole,
-  ExternalLink,
   Download,
   RefreshCw,
 } from "lucide-react";
@@ -35,9 +34,6 @@ function GalleryPage() {
   const [uploadsEnabled, setUploadsEnabled] = useState(false);
   const [requiresAuth, setRequiresAuth] = useState(false);
   const [drivePhotos, setDrivePhotos] = useState<DriveAlbum["items"]>([]);
-  const [driveFolderUrl, setDriveFolderUrl] = useState(
-    "https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing",
-  );
   const [galleryAccessGranted, setGalleryAccessGranted] = useState(false);
   const [driveUnavailable, setDriveUnavailable] = useState(false);
   const [driveRefreshing, setDriveRefreshing] = useState(false);
@@ -53,7 +49,6 @@ function GalleryPage() {
         data: { ...(accessCode ? { code: accessCode } : {}) },
       });
       setDrivePhotos(album.items);
-      if (album.folderUrl) setDriveFolderUrl(album.folderUrl);
       setDriveUnavailable(false);
       setDriveUpdatedAt(new Date());
     } catch {
@@ -180,7 +175,7 @@ function GalleryPage() {
               <p className="modal-kicker">ÁLBUM AO VIVO</p>
               <h2 id="drive-gallery-title">Fotos da comemoração</h2>
               <p aria-live="polite">
-                Atualização automática a cada 30 segundos
+                Atualização automática a cada 30 segundos · fotos e vídeos disponíveis aqui no aplicativo
                 {driveUpdatedAt
                   ? ` · última atualização às ${driveUpdatedAt.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
                   : ""}
@@ -202,14 +197,7 @@ function GalleryPage() {
                 />
                 {driveRefreshing ? "Atualizando..." : "Atualizar agora"}
               </button>
-              <a
-                className="gallery-cta drive-gallery-link"
-                href={driveFolderUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <ImageIcon size={18} /> Abrir pasta no Drive <ExternalLink size={16} />
-              </a>
+
             </div>
           </div>
           {driveUnavailable && (
@@ -222,23 +210,25 @@ function GalleryPage() {
           )}
           {!driveUnavailable && drivePhotos.length === 0 ? (
             <p className="drive-gallery-empty">
-              Ainda não há fotos disponíveis na pasta conectada.
+              Ainda não há fotos ou vídeos disponíveis no álbum.
             </p>
           ) : (
             drivePhotos.length > 0 && (
               <div className="drive-photo-grid">
                 {drivePhotos.map((photo) => (
-                  <a
-                    className="drive-photo-tile"
-                    href={photo.url}
-                    key={photo.id}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Abrir foto ${photo.name} em tamanho original`}
-                  >
-                    <img src={photo.url} alt={photo.name} loading="lazy" />
+                  <article className="drive-photo-tile" key={photo.id}>
+                    {photo.kind === "image" ? (
+                      <a href={photo.url} target="_self" aria-label={`Visualizar ${photo.name}`}>
+                        <img src={photo.url} alt={photo.name} loading="lazy" />
+                      </a>
+                    ) : (
+                      <video src={photo.url} controls playsInline preload="metadata" aria-label={photo.name} />
+                    )}
                     <span>{photo.name}</span>
-                  </a>
+                    <a className="gallery-drive-download" href={photo.downloadUrl}>
+                      <Download size={15} /> Baixar {photo.kind === "video" ? "vídeo" : "foto"}
+                    </a>
+                  </article>
                 ))}
               </div>
             )
