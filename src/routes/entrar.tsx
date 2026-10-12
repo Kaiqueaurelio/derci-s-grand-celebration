@@ -27,7 +27,7 @@ function LoginPage() {
         return;
       }
       const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (authError) throw authError;
+      if (authError) throw new Error(/invalid login/i.test(authError.message) ? "E-mail ou senha incorretos. Confira letras maiúsculas e símbolos da senha." : authError.message);
       let me;
       try { me = await getMyRole(); }
       catch { throw new Error("Não foi possível verificar suas permissões. Confira a configuração do backend."); }
