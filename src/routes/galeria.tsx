@@ -34,6 +34,7 @@ function GalleryPage() {
   const [uploadsEnabled, setUploadsEnabled] = useState(false);
   const [requiresAuth, setRequiresAuth] = useState(false);
   const [drivePhotos, setDrivePhotos] = useState<DriveAlbum["items"]>([]);
+  const [selectedDrivePhoto, setSelectedDrivePhoto] = useState<DriveAlbum["items"][number] | null>(null);
   const [galleryAccessGranted, setGalleryAccessGranted] = useState(false);
   const [driveUnavailable, setDriveUnavailable] = useState(false);
   const [driveRefreshing, setDriveRefreshing] = useState(false);
@@ -217,13 +218,21 @@ function GalleryPage() {
               <div className="drive-photo-grid">
                 {drivePhotos.map((photo) => (
                   <article className="drive-photo-tile" key={photo.id}>
-                    {photo.kind === "image" ? (
-                      <a href={photo.url} target="_self" aria-label={`Visualizar ${photo.name}`}>
+                    <button
+                      className="drive-photo-preview"
+                      type="button"
+                      onClick={() => setSelectedDrivePhoto(photo)}
+                      aria-label={`Visualizar ${photo.name} no aplicativo`}
+                    >
+                      {photo.kind === "image" ? (
                         <img src={photo.url} alt={photo.name} loading="lazy" />
-                      </a>
-                    ) : (
-                      <video src={photo.url} controls playsInline preload="metadata" aria-label={photo.name} />
-                    )}
+                      ) : (
+                        <div className="video-tile">
+                          <Video size={32} />
+                          <span>Reproduzir vídeo</span>
+                        </div>
+                      )}
+                    </button>
                     <span>{photo.name}</span>
                     <a className="gallery-drive-download" href={photo.downloadUrl}>
                       <Download size={15} /> Baixar {photo.kind === "video" ? "vídeo" : "foto"}
@@ -359,6 +368,27 @@ function GalleryPage() {
             )}
           </section>
         </>
+      )}
+      {selectedDrivePhoto && (
+        <div
+          className="modal-backdrop gallery-lightbox"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) setSelectedDrivePhoto(null);
+          }}
+        >
+          <section className="gallery-viewer" role="dialog" aria-modal="true" aria-labelledby="drive-gallery-viewer-title">
+            <button className="modal-close" onClick={() => setSelectedDrivePhoto(null)} aria-label="Fechar">×</button>
+            {selectedDrivePhoto.kind === "image" ? (
+              <img src={selectedDrivePhoto.url} alt={selectedDrivePhoto.name} />
+            ) : (
+              <video src={selectedDrivePhoto.url} controls autoPlay playsInline />
+            )}
+            <p id="drive-gallery-viewer-title">{selectedDrivePhoto.name}</p>
+            <a className="primary-action gallery-download-action" href={selectedDrivePhoto.downloadUrl}>
+              <Download size={16} /> Baixar arquivo
+            </a>
+          </section>
+        </div>
       )}
       {selected && (
         <div
