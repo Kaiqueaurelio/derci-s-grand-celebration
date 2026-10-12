@@ -101,48 +101,38 @@ function InvitationPage() {
       <div className="birthday-confetti" aria-hidden="true">
         {Array.from({ length: 18 }, (_, i) => <span key={i} className={"confetti-piece confetti-" + (i % 6)} />)}
       </div>
-      <div className="invitation-shell">
-        <div className="corner corner-tl" aria-hidden="true">✿</div>
-        <div className="corner corner-br" aria-hidden="true">✿</div>
-        <div className="frame-line" aria-hidden="true" />
-        <div className="surprise">É surpresa! <span>♡</span></div>
-        <p className="eyebrow">VAMOS CELEBRAR OS</p>
-        <div className="age">80 <span>anos</span></div>
-        <p className="eyebrow beloved">DA NOSSA QUERIDA</p>
-        <h1 className="honoree">{event.honoree || "Derci"}<span>♡</span></h1>
+      <article className="inv-card" aria-label="Convite dos 80 anos da Derci">
+        <img className="inv-flower inv-flower-tl" src={floralCorner} alt="" aria-hidden="true" />
+        <img className="inv-flower inv-flower-br" src={floralCorner} alt="" aria-hidden="true" />
+        <div className="inv-frame" aria-hidden="true" />
+        <div className="inv-surprise">É surpresa!<svg viewBox="0 0 160 40" aria-hidden="true"><path d="M4 22 C50 14 100 10 156 8" /><path d="M118 26 c-4-6-12-2-8 4 l8 8 l8-8 c4-6-4-10-8-4z" /></svg></div>
+        <p className="inv-caps">VAMOS CELEBRAR OS</p>
+        <p className="inv-age">80 anos</p>
+        <p className="inv-caps">DA NOSSA QUERIDA</p>
+        <h1 className="inv-name">Derci<span className="inv-heart">♡</span></h1>
+        <svg className="inv-swash" viewBox="0 0 300 20" aria-hidden="true"><path d="M8 16 C90 4 200 2 292 6" /></svg>
+        <p className="inv-intro">Essa data tão especial merece ser comemorada<br/>ao lado de pessoas que fazem parte da sua história!<br/>Contamos com a sua presença para tornar<br/>esse momento ainda mais inesquecível!</p>
 
-        <p className="intro">Essa data tão especial merece ser comemorada ao lado de pessoas que fazem parte da sua história! Contamos com a sua presença para tornar esse momento ainda mais inesquecível!</p>
-
-        <section className="event-details" aria-label="Informações da festa">
-          <div className="detail">
-            <CalendarDays aria-hidden="true" />
-            <span className="detail-label">DATA</span>
-            <strong>{new Date(event.eventDate + "T12:00:00").toLocaleDateString("pt-BR")}</strong>
-            {event.weekdayLabel && <small>({event.weekdayLabel})</small>}
-          </div>
-          <div className="detail">
-            <Clock3 aria-hidden="true" />
-            <span className="detail-label">HORÁRIO</span>
-            <strong>{event.eventTime}</strong>
-          </div>
-          <div className="detail">
-            <MapPin aria-hidden="true" />
-            <span className="detail-label">LOCAL</span>
-            <strong className="location">{event.location}</strong>
-          </div>
+        <section className="inv-details" aria-label="Informações da festa">
+          <div><CalendarDays aria-hidden="true" /><span>DATA</span><strong>12/10/2026</strong><small>(segunda-feira)</small></div>
+          <div><Clock3 aria-hidden="true" /><span>HORÁRIO</span><strong>13h</strong></div>
+          <div><MapPin aria-hidden="true" /><span>LOCAL</span><strong>Avenida Santa<br/>Marina, 1495</strong></div>
         </section>
 
-        <div className="bring-drink">
-          <Wine aria-hidden="true" />
-          <p>Traga sua bebida<br/>preferida!</p>
+        <div className="inv-drink">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 8h12l-1 14a5 5 0 0 1-10 0z M20 27v24 M13 53h14 M38 10h12l1 14a5 5 0 0 1-10 0z M46 29v22 M39 53h14 M30 4l2-3 M34 6l3-2 M26 5l-1-3" /></svg>
+          <p>Traga sua bebida<br/>preferida!<span className="inv-mini-swash">⎯⎯ ♡ ⎯⎯</span></p>
         </div>
 
-        <div className="secret-note">
+        <div className="inv-important">
           <LockKeyhole aria-hidden="true" />
-          <div><strong>IMPORTANTE:</strong><p>É uma festa surpresa!<br/>Pedimos que mantenha segredo para que a Derci tenha uma linda surpresa.</p></div>
+          <div><strong>IMPORTANTE:</strong><p>É uma festa surpresa!<br/><small>Pedimos que mantenha segredo para que a Derci<br/>tenha uma linda surpresa.</small></p></div>
         </div>
 
-        <p className="closing">Esperamos por você! <span>♡</span></p>
+        <p className="inv-closing">Esperamos por você!<span className="inv-mini-swash">⎯⎯ ♡ ⎯⎯</span></p>
+      </article>
+      <div className="invitation-shell inv-actions-shell">
+
 
         <div className="actions">
           <button className="primary-action" onClick={() => { setOpen(true); setSuccess(null); }}>
