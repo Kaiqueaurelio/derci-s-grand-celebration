@@ -1657,3 +1657,72 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
 .inv-actions-shell .corner,.inv-actions-shell .frame-line{display:none}
 @media (prefers-reduced-motion:no-preference){.inv-card{animation:derci-arrive .95s cubic-bezier(.2,.7,.2,1) both}}
 .invitation-shell.inv-actions-shell{background:transparent!important;border:0!important;box-shadow:none!important;padding-top:4px!important}
+
+
+/* Final icon alignment pass: keep every icon geometrically centered in its badge. */
+.story-icon,
+.memory-emblem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  padding: 0;
+  line-height: 0;
+  vertical-align: middle;
+}
+.story-icon {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  min-height: 54px;
+}
+.story-icon > svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  max-width: 24px;
+  flex: 0 0 24px;
+  margin: 0;
+  padding: 0;
+  transform: none;
+}
+.memory-emblem {
+  width: 70px;
+  height: 70px;
+  min-width: 70px;
+  min-height: 70px;
+}
+.memory-emblem > svg {
+  display: block;
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  max-width: 30px;
+  flex: 0 0 30px;
+  margin: 0;
+  padding: 0;
+  transform: none;
+}
+.botanical-mark > svg,
+.countdown-title > svg,
+.derci-final-cta > svg,
+.secret-section > svg {
+  display: block;
+  flex: 0 0 auto;
+}
+.story-card a > svg,
+.gallery-cta > svg,
+.gallery-secondary-cta > svg,
+.secondary-action > svg,
+.share-action > svg,
+.primary-action > svg {
+  display: block;
+  flex: 0 0 auto;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .story-icon { width: 54px; height: 54px; }
+  .story-icon > svg { width: 24px; height: 24px; }
+}
