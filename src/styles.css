@@ -65,25 +65,25 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --background: oklch(0.96 0.02 85);
+  --foreground: oklch(0.26 0.015 70);
+  --card: oklch(0.975 0.015 85);
+  --card-foreground: oklch(0.26 0.015 70);
+  --popover: oklch(0.975 0.015 85);
+  --popover-foreground: oklch(0.26 0.015 70);
+  --primary: oklch(0.64 0.11 75);
+  --primary-foreground: oklch(0.98 0.01 85);
+  --secondary: oklch(0.92 0.03 85);
+  --secondary-foreground: oklch(0.42 0.08 70);
+  --muted: oklch(0.93 0.02 85);
+  --muted-foreground: oklch(0.48 0.03 70);
+  --accent: oklch(0.42 0.05 135);
+  --accent-foreground: oklch(0.97 0.01 85);
+  --destructive: oklch(0.55 0.18 30);
+  --destructive-foreground: oklch(0.98 0.01 85);
+  --border: oklch(0.82 0.06 80);
+  --input: oklch(0.84 0.05 80);
+  --ring: oklch(0.64 0.11 75);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -146,11 +146,11 @@
 }
 
 :root {
-  --derci-cream: #f7eedf;
-  --derci-gold: #b28a42;
-  --derci-dark-gold: #79551f;
+  --derci-cream: #f6efe1;
+  --derci-gold: #b98a3e;
+  --derci-dark-gold: #8e6526;
   --derci-ink: #29251f;
-  --derci-green: #354533;
+  --derci-green: #4b5a3d;
 }
 body { margin: 0; }
 .derci-page {
@@ -1237,12 +1237,12 @@ button:focus-visible, a:focus-visible { outline:2px solid #d9bc7b; outline-offse
 
 /* Invitation palette polish: ivory paper, antique champagne gold and botanical olive. */
 :root {
-  --derci-cream: #f7eedf;
+  --derci-cream: #f6efe1;
   --derci-paper: #fffaf0;
-  --derci-gold: #b28a42;
-  --derci-dark-gold: #79551f;
+  --derci-gold: #b98a3e;
+  --derci-dark-gold: #8e6526;
   --derci-ink: #29251f;
-  --derci-green: #354533;
+  --derci-green: #4b5a3d;
 }
 .derci-page {
   background:
@@ -1620,3 +1620,39 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   .admin-page .settings-section { padding: 12px; }
   .admin-page .group-actions button { flex-basis: 100%; }
 }
+
+/* ===== Faithful recreation of the original invitation ===== */
+.inv-card{position:relative;max-width:680px;margin:clamp(12px,4vw,40px) auto 28px;aspect-ratio:2/3;min-height:0;padding:clamp(52px,11%,96px) clamp(22px,8%,64px) clamp(40px,7%,64px);background:radial-gradient(ellipse at 50% 40%,#fbf6ec 0%,var(--derci-cream) 70%,#efe4cf 100%);color:var(--derci-ink);text-align:center;overflow:hidden;box-shadow:0 24px 60px -30px rgba(80,58,20,.45);font-family:'Lora',Georgia,serif;container-type:inline-size;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.inv-frame{position:absolute;inset:4.2% 4.6%;border:1.5px solid var(--derci-gold);opacity:.75;pointer-events:none}
+.inv-flower{position:absolute;width:44%;pointer-events:none;z-index:1}
+.inv-flower-tl{top:-1%;left:-1%}
+.inv-flower-br{bottom:-1%;right:-1%;transform:rotate(180deg)}
+.inv-card>*:not(.inv-flower):not(.inv-frame){position:relative;z-index:2}
+.inv-surprise{align-self:flex-end;margin:-4cqw 2cqw 1cqw 0;font:400 7.4cqw/1 'Great Vibes',cursive;color:var(--derci-gold);transform:rotate(-8deg);display:flex;flex-direction:column;align-items:center}
+.inv-surprise svg{width:24cqw;height:6cqw;fill:none;stroke:var(--derci-gold);stroke-width:2}
+.inv-caps{margin:0;font:500 3.4cqw/1.2 'Cormorant Garamond',Georgia,serif;letter-spacing:.32em;color:var(--derci-ink)}
+.inv-age{margin:-.5cqw 0 -1cqw;font:400 20cqw/1.05 'Great Vibes',cursive;background:linear-gradient(180deg,#d4a955 0%,#a87a2f 55%,#8a6224 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.inv-name{margin:-1cqw 0 0;font:400 20cqw/1.05 'Great Vibes',cursive;background:linear-gradient(180deg,#d4a955 0%,#a87a2f 55%,#8a6224 100%);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative}
+.inv-heart{position:absolute;right:-7cqw;top:42%;font:400 5cqw/1 Georgia,serif;color:var(--derci-gold);-webkit-text-fill-color:var(--derci-gold)}
+.inv-swash{width:46cqw;height:4cqw;margin:-3cqw 0 2.4cqw;fill:none;stroke:var(--derci-gold);stroke-width:2.2}
+.inv-intro{margin:0 0 4.4cqw;font:400 3.15cqw/1.38 'Lora',Georgia,serif;color:var(--derci-ink)}
+.inv-details{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%;margin-bottom:3.6cqw}
+.inv-details>div{display:flex;flex-direction:column;align-items:center;gap:.6cqw;padding:0 1.5cqw}
+.inv-details>div+div{border-left:1.5px solid var(--derci-gold)}
+.inv-details svg{width:7cqw;height:7cqw;color:var(--derci-gold);stroke-width:1.4;margin-bottom:1cqw}
+.inv-details span{font:500 2.6cqw/1 'Cormorant Garamond',serif;letter-spacing:.22em}
+.inv-details strong{font:600 3.9cqw/1.2 'Lora',Georgia,serif;color:var(--derci-ink)}
+.inv-details small{font:400 2.5cqw/1.2 'Lora',serif}
+.inv-drink{display:flex;align-items:center;justify-content:center;gap:4cqw;width:86%;padding:2.4cqw 0;margin-bottom:3cqw;background:radial-gradient(ellipse at center,rgba(222,198,150,.55) 0%,rgba(230,210,170,.35) 55%,transparent 75%)}
+.inv-drink svg{width:15cqw;height:15cqw;fill:none;stroke:var(--derci-gold);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.inv-drink p{margin:0;font:400 7cqw/1.05 'Allura',cursive;color:var(--derci-dark-gold);display:flex;flex-direction:column}
+.inv-mini-swash{font:400 2.6cqw/1.4 Georgia,serif;color:var(--derci-gold);letter-spacing:-.05em}
+.inv-important{display:flex;align-items:flex-start;gap:3cqw;margin-bottom:2.6cqw}
+.inv-important>svg{width:5.6cqw;height:5.6cqw;color:var(--derci-gold);stroke-width:1.5;margin-top:2cqw}
+.inv-important strong{display:block;font:600 2.9cqw/1.2 'Cormorant Garamond',serif;letter-spacing:.16em;color:var(--derci-gold)}
+.inv-important p{margin:.6cqw 0 0;font:400 2.75cqw/1.35 'Lora',serif}
+.inv-important small{font-size:2.45cqw}
+.inv-closing{margin:0;font:400 6.4cqw/1.05 'Allura',cursive;color:var(--derci-dark-gold);display:flex;flex-direction:column}
+.inv-actions-shell{margin-top:0!important}
+.inv-actions-shell .corner,.inv-actions-shell .frame-line{display:none}
+@media (prefers-reduced-motion:no-preference){.inv-card{animation:derci-arrive .95s cubic-bezier(.2,.7,.2,1) both}}
