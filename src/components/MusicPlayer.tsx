@@ -30,26 +30,7 @@ export function MusicPlayer() {
     };
   }, []);
 
-  const toggle = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (playing) {
-      audio.pause();
-      setPlaying(false);
-    } else {
-      audio.play().then(() => setPlaying(true)).catch(() => {});
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={playing ? "Pausar música" : "Tocar música"}
-      title={playing ? "Pausar música" : "Tocar música"}
-      className="fixed bottom-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-[#B28A42]/60 bg-[#FFFDF8] text-[#79551F] shadow-lg transition hover:scale-105"
-    >
-      {playing ? <Pause className="h-5 w-5" /> : <Music className="h-5 w-5" />}
-    </button>
-  );
+  // Sem botão visível: a música toca em loop a partir do primeiro toque.
+  void playing;
+  return null;
 }
