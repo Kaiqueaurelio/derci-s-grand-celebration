@@ -67,13 +67,13 @@ function LoginPage() {
       <h2>Área da organização</h2>
       <p className="modal-subtitle">{creating ? "Crie a conta inicial autorizada para administrar a festa." : "Entre para administrar as confirmações e liberar a entrada na portaria."}</p>
       <form onSubmit={submit}>
-        <label>E-mail<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} autoComplete="username"/></label>
+        <label>E-mail<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} autoComplete={creating ? "off" : "username"}/></label>
         <label>Senha<input type="password" required minLength={8} value={password} onChange={e=>setPassword(e.target.value)} autoComplete={creating ? "new-password" : "current-password"}/></label>
         {error && <p className="form-error" role="alert">{error}</p>}
         {notice && <p className="success-note">{notice}</p>}
         <button className="primary-action submit-action" disabled={busy}>{busy?(creating?"Criando conta...":"Entrando..."):(creating?"Criar conta de administrador":"Entrar com segurança")}</button>
-        <button type="button" className="outline-action" disabled={busy} onClick={()=>{setCreating(!creating);setError("");setNotice("");}}>{creating?"Já tenho uma conta — entrar":"Primeiro acesso? Criar conta de administrador"}</button>
-        <p className="privacy-note">O cadastro inicial é limitado ao e-mail autorizado e só pode ativar a função se ainda não existir administrador.</p>
+        <button type="button" className="outline-action" disabled={busy} onClick={()=>{const next = !creating; setCreating(next); if (next) setEmail("admin@salvador.br"); setError(""); setNotice("");}}>{creating?"Já tenho uma conta — entrar":"Primeiro acesso? Criar conta de administrador"}</button>
+        <p className="privacy-note">Para o primeiro cadastro, use admin@salvador.br. A função só será ativada se ainda não existir administrador.</p>
       </form>
       <a className="add-companion" href="/">← Voltar ao convite</a>
     </section>
