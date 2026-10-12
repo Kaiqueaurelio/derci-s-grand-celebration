@@ -135,7 +135,7 @@ function AdminPage() {
         <section className="settings-section"><h3><CalendarDays size={18}/> Identidade e data do evento</h3>
           <label>Nome da pessoa homenageada<input required minLength={2} maxLength={120} value={eventSettings.honoree} onChange={e=>patchSettings({honoree:e.target.value})}/></label>
           <label>Data do evento<input type="date" required value={eventSettings.event_date} onChange={e=>patchSettings({event_date:e.target.value})}/></label>
-          <label>Dia da semana exibido<input maxLength={30} value={eventSettings.weekday_label} onChange={e=>patchSettings({weekday_label:e.target.value})} placeholder="Ex.: Domingo"/></label>
+          <label>Dia da semana exibido<input maxLength={30} value={eventSettings.weekday_label ?? ""} onChange={e=>patchSettings({weekday_label:e.target.value})} placeholder="Ex.: Domingo"/></label>
           <label>Horário<input required maxLength={20} value={eventSettings.event_time} onChange={e=>patchSettings({event_time:e.target.value})} placeholder="Ex.: 12h às 18h"/></label>
           <label><MapPin size={16}/> Endereço/local<input required minLength={3} maxLength={200} value={eventSettings.location} onChange={e=>patchSettings({location:e.target.value})}/></label>
           <label>Link do Google Maps<input type="url" value={eventSettings.maps_url??""} onChange={e=>patchSettings({maps_url:e.target.value})} placeholder="https://maps.google.com/..."/></label>

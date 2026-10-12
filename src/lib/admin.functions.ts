@@ -229,7 +229,7 @@ export const updateEventSettings = createServerFn({ method: "POST" })
     if (gallery_code && gallery_code.trim()) patch.gallery_code_hash = await sha256(`gallery:${gallery_code.trim().toLowerCase()}`);
     if (data.gallery_access === "code" && !ev.gallery_code_hash && !patch.gallery_code_hash)
       throw new Error("Defina um código para a galeria.");
-    const { error } = await (await admin()).from("events").update(patch).eq("id", ev.id);
+    const { error } = await (await admin()).from("events").update(patch as never).eq("id", ev.id);
     if (error) throw new Error("Erro ao salvar configurações.");
     return { ok: true };
   });
