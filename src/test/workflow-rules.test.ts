@@ -9,13 +9,33 @@ import {
 describe("Fluxo de confirmação de presença", () => {
   it("normaliza telefone e nomes mantendo os nomes exibidos", () => {
     const result = validateRsvpGroupRules(
-      { responsibleName: "Maria Silva", phone: "(11) 99999-0000", attending: true, companions: ["João Silva"] },
+      {
+        responsibleName: "Maria Silva",
+        phone: "(11) 99999-0000",
+        attending: true,
+        companions: ["João Silva"],
+      },
       true,
       3,
     );
     expect(result.phone).toBe("11999990000");
     expect(result.names).toEqual(["Maria Silva", "João Silva"]);
     expect(result.normalized).toEqual(["maria silva", "joao silva"]);
+  });
+
+  it("remove espaços extras dos nomes sem alterar a forma de exibição", () => {
+    const result = validateRsvpGroupRules(
+      {
+        responsibleName: "  Ana   Souza ",
+        phone: "(11) 98888-1234",
+        attending: true,
+        companions: [" João   Souza "],
+      },
+      false,
+      2,
+    );
+    expect(result.names).toEqual(["Ana Souza", "João Souza"]);
+    expect(result.normalized).toEqual(["ana souza", "joao souza"]);
   });
 
   it("rejeita nomes duplicados mesmo com diferenças de acento", () => {
@@ -30,7 +50,11 @@ describe("Fluxo de confirmação de presença", () => {
 
   it("exige telefone quando configurado e valida número informado", () => {
     expect(() =>
-      validateRsvpGroupRules({ responsibleName: "Maria Silva", attending: true, companions: [] }, true, 3),
+      validateRsvpGroupRules(
+        { responsibleName: "Maria Silva", attending: true, companions: [] },
+        true,
+        3,
+      ),
     ).toThrow(/telefone/i);
     expect(() =>
       validateRsvpGroupRules(
@@ -107,10 +131,16 @@ describe("Fluxo de envio para a galeria", () => {
   });
 
   it("rejeita formato não permitido, arquivo vazio e arquivo acima do limite", () => {
-    expect(() => validateGalleryUpload("application/pdf", 1024, 10, 100)).toThrow(/Formato não aceito/);
+    expect(() => validateGalleryUpload("application/pdf", 1024, 10, 100)).toThrow(
+      /Formato não aceito/,
+    );
     expect(() => validateGalleryUpload("image/jpeg", 0, 10, 100)).toThrow(/vazio ou inválido/i);
-    expect(() => validateGalleryUpload("image/jpeg", 11 * 1024 * 1024, 10, 100)).toThrow(/maior que 10 MB/);
-    expect(() => validateGalleryUpload("video/mp4", 101 * 1024 * 1024, 10, 100)).toThrow(/maior que 100 MB/);
+    expect(() => validateGalleryUpload("image/jpeg", 11 * 1024 * 1024, 10, 100)).toThrow(
+      /maior que 10 MB/,
+    );
+    expect(() => validateGalleryUpload("video/mp4", 101 * 1024 * 1024, 10, 100)).toThrow(
+      /maior que 100 MB/,
+    );
   });
 
   it("não confunde imagens com vídeos pelo tipo MIME", () => {
@@ -135,8 +165,16 @@ describe("Snapshot atualizado para o assistente de confirmações", () => {
         { full_name: "João Silva", checked_in_at: null },
       ],
     },
-    { responsible_name: "Ana Souza", attending: false, guests: [{ full_name: "Ana Souza", checked_in_at: null }] },
-    { responsible_name: "Pedro Lima", attending: null, guests: [{ full_name: "Pedro Lima", checked_in_at: null }] },
+    {
+      responsible_name: "Ana Souza",
+      attending: false,
+      guests: [{ full_name: "Ana Souza", checked_in_at: null }],
+    },
+    {
+      responsible_name: "Pedro Lima",
+      attending: null,
+      guests: [{ full_name: "Pedro Lima", checked_in_at: null }],
+    },
   ];
 
   it("conta corretamente grupos, pessoas confirmadas, recusas, pendências e entradas", () => {
@@ -162,7 +200,9 @@ describe("Snapshot atualizado para o assistente de confirmações", () => {
   });
 
   it("não envia telefone nem observações privadas ao modelo", () => {
-    const snapshot = buildRsvpSnapshot(event, [{ ...groups[0], phone: "11999990000", notes: "anotação confidencial" } as never]);
+    const snapshot = buildRsvpSnapshot(event, [
+      { ...groups[0], phone: "11999990000", notes: "anotação confidencial" } as never,
+    ]);
     const json = JSON.stringify(snapshot);
     expect(json).not.toContain("11999990000");
     expect(json).not.toContain("anotação confidencial");

@@ -66,8 +66,8 @@ function EditConfirmationPage() {
               <label>Seu nome completo<input required value={name} onChange={e=>setName(e.target.value)} minLength={3} autoComplete="name"/></label>
               <label>WhatsApp <span className="optional">(opcional)</span><input value={phone} onChange={e=>setPhone(e.target.value)} autoComplete="tel" inputMode="tel"/></label>
               <fieldset><legend>Você vai comparecer?</legend>
-                <label className="radio-label"><input type="radio" checked={attending} onChange={()=>setAttending(true)}/> Sim, estarei lá!</label>
-                <label className="radio-label"><input type="radio" checked={!attending} onChange={()=>{setAttending(false);setCompanions([])}}/> Não poderei ir.</label>
+                <label className="radio-label"><input type="radio" name="rsvp-attending" checked={attending} onChange={()=>setAttending(true)}/> Sim, estarei lá!</label>
+                <label className="radio-label"><input type="radio" name="rsvp-attending" checked={!attending} onChange={()=>{setAttending(false);setCompanions([])}}/> Não poderei ir.</label>
               </fieldset>
               {attending && <div className="companions">
                 <div className="companions-heading"><Users size={18}/><span>Familiares e acompanhantes</span></div>

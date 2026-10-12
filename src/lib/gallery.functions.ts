@@ -5,6 +5,7 @@ import { validateGalleryUpload } from "./workflow-rules";
 const S = () => import("./server/core.server");
 
 const accessSchema = z.object({ code: z.string().max(40).optional() });
+const DEFAULT_DRIVE_FOLDER_ID = "1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU";
 
 /** Backend gate for every gallery read/upload, according to the configured mode. */
 async function assertGalleryAccess(code?: string) {
@@ -69,6 +70,31 @@ export const getGallery = createServerFn({ method: "POST" })
           createdAt: r.captured_at ?? r.created_at,
         })),
     };
+  });
+
+/** Lists recent folder photos only after the same public/code/auth gate as the app gallery. */
+export const getDriveGallery = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => accessSchema.parse(d))
+  .handler(async ({ data }) => {
+    const ev = await assertGalleryAccess(data.code);
+    const { getDriveSettings, listFolder, createDrivePreviewUrl } = await import("./server/drive.server");
+    const settings = await getDriveSettings();
+    const folderId = settings.folder_id || DEFAULT_DRIVE_FOLDER_ID;
+    const files = await listFolder(folderId);
+    const items = await Promise.all(
+      files
+        .filter((file) => file.mimeType.startsWith("image/") && Number(file.size ?? 0) > 0 && Number(file.size ?? 0) <= ev.max_image_mb * 1024 * 1024)
+        .sort((a, b) => (b.createdTime ?? "").localeCompare(a.createdTime ?? ""))
+        .slice(0, 80)
+        .map(async (file) => ({
+          id: file.id,
+          name: file.name,
+          mimeType: file.mimeType,
+          createdAt: file.imageMediaMetadata?.time ?? file.createdTime ?? null,
+          url: await createDrivePreviewUrl(file.id, file.mimeType),
+        })),
+    );
+    return { items, folderUrl: `https://drive.google.com/drive/folders/${encodeURIComponent(folderId)}` };
   });
 
 export const createUpload = createServerFn({ method: "POST" })
@@ -144,8 +170,8 @@ export const finalizeUpload = createServerFn({ method: "POST" })
     if (!m || !m.storage_path) throw new Error("Envio não encontrado.");
     if (m.status === "pending_upload") {
       // Confirm the object really exists in storage before reporting success.
-      const folder = m.storage_path.split("/")[0];
-      const file = m.storage_path.split("/")[1];
+      const [folder, file] = m.storage_path.split("/");
+      if (!folder || !file) throw new Error("Caminho de envio inválido.");
       const { data: objs } = await db.storage.from("media").list(folder, { search: file, limit: 1 });
       const obj = objs?.find((o) => o.name === file);
       if (!obj) {

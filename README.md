@@ -1,6 +1,7 @@
 # Derci's Grand Celebration
 
 # PROJETO: DONA DERCI — 80 ANOS
+
 ## Aplicativo de convite digital, confirmação de presença, controle de portaria e álbum de memórias
 
 Desenvolva uma aplicação web completa, responsiva, elegante e funcional para a comemoração dos 80 anos da minha avó Derci.
@@ -14,6 +15,7 @@ Não crie apenas um protótipo. Implemente as funcionalidades reais, com banco d
 A interface deve reproduzir digitalmente a elegância do convite original.
 
 ### Paleta de cores
+
 - Creme: #F7EEDD.
 - Dourado champanhe: #B28A42.
 - Dourado escuro: #79551F.
@@ -22,6 +24,7 @@ A interface deve reproduzir digitalmente a elegância do convite original.
 - Verde folhagem: #354533.
 
 ### Tipografia
+
 - Títulos comemorativos: Great Vibes ou Allura.
 - Títulos editoriais: Cormorant Garamond ou Playfair Display.
 - Textos, formulários e botões: uma fonte altamente legível, como Inter.
@@ -29,6 +32,7 @@ A interface deve reproduzir digitalmente a elegância do convite original.
 Carregue as fontes adequadamente e configure alternativas caso alguma não esteja disponível.
 
 ### Elementos decorativos
+
 - Flores brancas delicadas.
 - Folhagens verde-escuras.
 - Linhas e ornamentos dourados.
@@ -54,6 +58,7 @@ Utilizar a mensagem:
 "Essa data tão especial merece ser comemorada ao lado de pessoas que fazem parte da sua história! Contamos com a sua presença para tornar esse momento ainda mais inesquecível!"
 
 Exibir os dados do evento:
+
 - Data: 12/10/2026.
 - Horário: 13h.
 - Local: Avenida Santa Marina, 1495.
@@ -73,6 +78,7 @@ Finalizar com:
 "Esperamos por você!"
 
 Criar os seguintes botões:
+
 - Confirmar minha presença.
 - Ver localização.
 - Compartilhar convite pelo WhatsApp.
@@ -87,6 +93,7 @@ A página deverá funcionar perfeitamente em celulares, sem exigir que o convida
 Ao clicar em "Confirmar minha presença", abrir um formulário elegante.
 
 Campos:
+
 - Nome completo do responsável.
 - Telefone ou WhatsApp, opcional conforme a configuração.
 - Confirmação: vou comparecer ou não poderei comparecer.
@@ -105,6 +112,7 @@ Acompanhante 2: Ana da Silva.
 O sistema deverá registrar as três pessoas individualmente e vinculá-las ao mesmo grupo familiar.
 
 Fluxo:
+
 1. O convidado acessa o convite.
 2. Preenche seus dados.
 3. Informa se comparecerá.
@@ -146,6 +154,7 @@ Aplicar políticas RLS e validação no servidor para proteger os dados pessoais
 Criar uma área administrativa com autenticação real.
 
 O painel deverá apresentar indicadores atualizados:
+
 - Total de pessoas confirmadas.
 - Total de responsáveis.
 - Total de acompanhantes.
@@ -154,6 +163,7 @@ O painel deverá apresentar indicadores atualizados:
 - Total de check-ins realizados.
 
 Disponibilizar:
+
 - Pesquisa por nome.
 - Filtros por status.
 - Consulta dos grupos familiares.
@@ -175,6 +185,7 @@ Não permitir acesso administrativo apenas por meio de uma URL secreta ou de um 
 Criar uma interface simples, rápida e adaptada a celulares e tablets.
 
 Funcionalidades:
+
 - Buscar pessoas pelo nome.
 - Localizar qualquer integrante de uma família.
 - Exibir o grupo familiar correspondente.
@@ -222,6 +233,7 @@ Aceitar vídeos MP4 e MOV quando compatíveis com a infraestrutura de armazename
 Implementar validação de arquivos, limites de tamanho configuráveis, controle de requisições e tratamento de erros.
 
 Exibir estados como:
+
 - Aguardando envio.
 - Enviando.
 - Enviado.
@@ -242,6 +254,7 @@ A integração deverá permitir que o administrador configure a pasta de destino
 Implementar uma função segura no backend, preferencialmente uma Supabase Edge Function se o projeto utilizar Supabase.
 
 Requisitos:
+
 - Autenticação OAuth 2.0 quando apropriada.
 - Armazenamento seguro de credenciais e tokens.
 - Utilização dos escopos mínimos necessários.
@@ -289,6 +302,7 @@ Não criar arquivos fictícios para simular uma sincronização bem-sucedida.
 # 9. PRIVACIDADE E SEGURANÇA
 
 Implementar:
+
 - Aviso de privacidade.
 - Coleta mínima de informações.
 - Controle de acesso à galeria.
@@ -303,6 +317,7 @@ Implementar:
 - Cuidados especiais com fotografias de crianças.
 
 Permitir configurar a galeria como:
+
 - Acessível por link.
 - Protegida por código.
 - Restrita a usuários autenticados.
@@ -316,6 +331,7 @@ Não exibir publicamente a lista de convidados nem os dados de contato.
 Aplicar a identidade visual do convite a todas as páginas.
 
 Utilizar:
+
 - Fundo creme.
 - Detalhes dourados.
 - Tipografia elegante.
@@ -335,6 +351,7 @@ Implementar PWA se compatível, sem exigir instalação para o uso normal.
 # 11. TESTES OBRIGATÓRIOS
 
 Testar:
+
 1. Confirmação de presença com acompanhantes.
 2. Registro individual dos convidados.
 3. Resposta negativa.
@@ -383,6 +400,7 @@ Não substituir integrações reais por mocks, botões sem funcionalidade ou dad
 Entregar uma aplicação funcional e pronta para publicação, com código organizado, componentes reutilizáveis, banco persistente, tratamento de exceções e documentação.
 
 Fornecer:
+
 - Link público do convite.
 - Link administrativo.
 - Instruções de configuração do evento.
@@ -414,3 +432,15 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Assistente de confirmações
+
+O painel administrativo permite perguntar sobre presenças e check-ins em linguagem natural. O servidor consulta novamente os dados do evento antes de cada pergunta e envia ao AI Gateway apenas os nomes, status de confirmação e check-ins necessários para responder. Telefones e observações privadas ficam fora do contexto enviado ao modelo.
+
+O assistente usa o AI Gateway do Lovable com a variável privada `LOVABLE_API_KEY`, fornecida pelo ambiente Lovable Cloud. Não exponha essa chave em variáveis públicas do navegador.
+
+## Configuração do Supabase no servidor
+
+As rotas de confirmação, portaria e galeria usam operações protegidas no servidor. Configure `SUPABASE_URL` e uma chave privilegiada (`SUPABASE_SECRET_KEY`, recomendada, ou `SUPABASE_SERVICE_ROLE_KEY`) como segredos do ambiente de execução, por exemplo em Lovable Cloud. Não use a chave pública para substituir essa chave e nunca a exponha em variáveis `VITE_*`.
+
+Para habilitar o primeiro acesso administrativo, configure também `INITIAL_ADMIN_EMAIL` como variável **privada do servidor**, com o e-mail da conta que será autorizada a reivindicar o papel de administrador. Sem essa configuração, a reivindicação inicial fica desabilitada. Depois que o primeiro administrador for criado, remova essa variável do ambiente.

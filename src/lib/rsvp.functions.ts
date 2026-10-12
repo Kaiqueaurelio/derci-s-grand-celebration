@@ -35,26 +35,28 @@ export type PublicEvent = {
   maxVideoMb: number;
 };
 
-export const getPublicEvent = createServerFn({ method: "GET" }).handler(async (): Promise<PublicEvent> => {
-  const { getEvent } = await import("./server/core.server");
-  const e = await getEvent();
-  return {
-    honoree: e.honoree,
-    eventDate: e.event_date,
-    eventTime: e.event_time,
-    weekdayLabel: e.weekday_label,
-    location: e.location,
-    mapsUrl: e.maps_url,
-    rsvpOpen: e.rsvp_open,
-    phoneRequired: e.phone_required,
-    maxCompanions: e.max_companions,
-    galleryEnabled: e.gallery_enabled,
-    galleryAccess: e.gallery_access,
-    uploadsEnabled: e.uploads_enabled,
-    maxImageMb: e.max_image_mb,
-    maxVideoMb: e.max_video_mb,
-  };
-});
+export const getPublicEvent = createServerFn({ method: "GET" }).handler(
+  async (): Promise<PublicEvent> => {
+    const { getEvent } = await import("./server/core.server");
+    const e = await getEvent();
+    return {
+      honoree: e.honoree,
+      eventDate: e.event_date,
+      eventTime: e.event_time,
+      weekdayLabel: e.weekday_label,
+      location: e.location,
+      mapsUrl: e.maps_url,
+      rsvpOpen: e.rsvp_open,
+      phoneRequired: e.phone_required,
+      maxCompanions: e.max_companions,
+      galleryEnabled: e.gallery_enabled,
+      galleryAccess: e.gallery_access,
+      uploadsEnabled: e.uploads_enabled,
+      maxImageMb: e.max_image_mb,
+      maxVideoMb: e.max_video_mb,
+    };
+  },
+);
 
 type RsvpInput = z.infer<typeof rsvpSchema>;
 
@@ -83,7 +85,11 @@ export const submitRsvp = createServerFn({ method: "POST" })
     if (!ev.rsvp_open) throw new Error("As confirmações estão encerradas. Fale com a organização.");
 
     // Idempotent resubmission (double tap / flaky network).
-    const { data: prior } = await db.from("guest_groups").select("id").eq("submission_id", data.submissionId).maybeSingle();
+    const { data: prior } = await db
+      .from("guest_groups")
+      .select("id")
+      .eq("submission_id", data.submissionId)
+      .maybeSingle();
     if (prior) throw new Error("Esta confirmação já foi enviada. Use o link de edição recebido.");
 
     const { phone, names, normalized } = validateGroup(data, ev.phone_required, ev.max_companions);
@@ -98,8 +104,8 @@ export const submitRsvp = createServerFn({ method: "POST" })
       .from("guest_groups")
       .insert({
         event_id: ev.id,
-        responsible_name: names[0],
-        normalized_name: normalized[0],
+        responsible_name: names[0]!,
+        normalized_name: normalized[0]!,
         phone,
         attending: data.attending,
         notes: data.notes?.trim() || null,
@@ -110,14 +116,15 @@ export const submitRsvp = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error || !group) {
-      if (error?.code === "23505") throw new Error("Já existe uma confirmação com este nome de responsável.");
+      if (error?.code === "23505")
+        throw new Error("Já existe uma confirmação com este nome de responsável.");
       throw new Error("Não foi possível salvar. Tente novamente.");
     }
     const { error: gErr } = await db.from("guests").insert(
       names.map((n, i) => ({
         group_id: group.id,
         full_name: n,
-        normalized_name: normalized[i],
+        normalized_name: normalized[i]!,
         is_responsible: i === 0,
         position: i,
       })),
@@ -136,7 +143,9 @@ async function groupByToken(token: string) {
   const db = await admin();
   const { data } = await db
     .from("guest_groups")
-    .select("id, responsible_name, phone, attending, notes, guests(id, full_name, is_responsible, position, normalized_name, checked_in_at)")
+    .select(
+      "id, responsible_name, phone, attending, notes, guests(id, full_name, is_responsible, position, normalized_name, checked_in_at)",
+    )
     .eq("edit_token_hash", await sha256(token))
     .maybeSingle();
   if (!data) throw new Error("Link de edição inválido ou expirado.");
@@ -158,7 +167,9 @@ export const getRsvpByToken = createServerFn({ method: "POST" })
   });
 
 export const updateRsvpByToken = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => rsvpSchema.extend({ token: z.string().min(20).max(100) }).parse(d))
+  .inputValidator((d: unknown) =>
+    rsvpSchema.extend({ token: z.string().min(20).max(100) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { admin, getEvent } = await import("./server/core.server");
     const db = await admin();
@@ -166,13 +177,16 @@ export const updateRsvpByToken = createServerFn({ method: "POST" })
     const g = await groupByToken(data.token);
     const { phone, names, normalized } = validateGroup(data, ev.phone_required, ev.max_companions);
     const conflicts = await findConflicts(normalized, g.id);
-    if (conflicts.length) throw new Error(`Já existe confirmação em outro grupo para: ${conflicts.join(", ")}.`);
-    await replaceGroupGuests(g.id, names, normalized);
+    if (conflicts.length)
+      throw new Error(`Já existe confirmação em outro grupo para: ${conflicts.join(", ")}.`);
+    await (
+      await import("./server/rsvp-guest-sync.server")
+    ).replaceGroupGuests(g.id, names, normalized);
     const { error } = await db
       .from("guest_groups")
       .update({
-        responsible_name: names[0],
-        normalized_name: normalized[0],
+        responsible_name: names[0]!,
+        normalized_name: normalized[0]!,
         phone,
         attending: data.attending,
         notes: data.notes?.trim() || null,
@@ -182,31 +196,6 @@ export const updateRsvpByToken = createServerFn({ method: "POST" })
     if (error) throw new Error("Não foi possível atualizar. Tente novamente.");
     return { attending: data.attending, names };
   });
-
-/** Keeps existing guest rows (and their check-ins) when names stay the same. */
-export async function replaceGroupGuests(groupId: string, names: string[], normalized: string[]) {
-  const { admin } = await import("./server/core.server");
-  const db = await admin();
-  const { data: existing } = await db.from("guests").select("id, normalized_name").eq("group_id", groupId);
-  const keep = new Map((existing ?? []).map((e) => [e.normalized_name, e.id]));
-  const toDelete = (existing ?? []).filter((e) => !normalized.includes(e.normalized_name)).map((e) => e.id);
-  if (toDelete.length) await db.from("guests").delete().in("id", toDelete);
-  for (let i = 0; i < names.length; i++) {
-    const id = keep.get(normalized[i]);
-    if (id) {
-      await db.from("guests").update({ full_name: names[i], is_responsible: i === 0, position: i }).eq("id", id);
-    } else {
-      const { error } = await db.from("guests").insert({
-        group_id: groupId,
-        full_name: names[i],
-        normalized_name: normalized[i],
-        is_responsible: i === 0,
-        position: i,
-      });
-      if (error) throw new Error("Não foi possível salvar os nomes.");
-    }
-  }
-}
 
 export const deleteRsvpByToken = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => tokenSchema.parse(d))

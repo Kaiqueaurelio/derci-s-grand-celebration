@@ -15,6 +15,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as PortariaRouteImport } from './routes/portaria'
 import { Route as ConfirmarTokenRouteImport } from './routes/confirmar.$token'
+import { Route as ApiDriveGalleryFileIdRouteImport } from './routes/api.drive-gallery.$fileId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,11 @@ const ConfirmarTokenRoute = ConfirmarTokenRouteImport.update({
   path: '/confirmar/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDriveGalleryFileIdRoute = ApiDriveGalleryFileIdRouteImport.update({
+  id: '/api/drive-gallery/$fileId',
+  path: '/api/drive-gallery/$fileId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
+  '/api/drive-gallery/$fileId': typeof ApiDriveGalleryFileIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
+  '/api/drive-gallery/$fileId': typeof ApiDriveGalleryFileIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,14 +79,27 @@ export interface FileRoutesById {
   '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
   '/confirmar/$token': typeof ConfirmarTokenRoute
+  '/api/drive-gallery/$fileId': typeof ApiDriveGalleryFileIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/admin' | '/entrar' | '/galeria' | '/portaria' | '/confirmar/$token'
+    | '/'
+    | '/admin'
+    | '/entrar'
+    | '/galeria'
+    | '/portaria'
+    | '/confirmar/$token'
+    | '/api/drive-gallery/$fileId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/admin' | '/entrar' | '/galeria' | '/portaria' | '/confirmar/$token'
+    | '/'
+    | '/admin'
+    | '/entrar'
+    | '/galeria'
+    | '/portaria'
+    | '/confirmar/$token'
+    | '/api/drive-gallery/$fileId'
   id:
     | '__root__'
     | '/'
@@ -87,6 +108,7 @@ export interface FileRouteTypes {
     | '/galeria'
     | '/portaria'
     | '/confirmar/$token'
+    | '/api/drive-gallery/$fileId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,6 +118,7 @@ export interface RootRouteChildren {
   GaleriaRoute: typeof GaleriaRoute
   PortariaRoute: typeof PortariaRoute
   ConfirmarTokenRoute: typeof ConfirmarTokenRoute
+  ApiDriveGalleryFileIdRoute: typeof ApiDriveGalleryFileIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -142,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmarTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/drive-gallery/$fileId': {
+      id: '/api/drive-gallery/$fileId'
+      path: '/api/drive-gallery/$fileId'
+      fullPath: '/api/drive-gallery/$fileId'
+      preLoaderRoute: typeof ApiDriveGalleryFileIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -152,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   GaleriaRoute: GaleriaRoute,
   PortariaRoute: PortariaRoute,
   ConfirmarTokenRoute: ConfirmarTokenRoute,
+  ApiDriveGalleryFileIdRoute: ApiDriveGalleryFileIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

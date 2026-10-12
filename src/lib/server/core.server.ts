@@ -18,8 +18,8 @@ export function randomToken(bytes = 24): string {
 }
 
 export async function admin() {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  return supabaseAdmin;
+  const { getSupabaseAdmin } = await import("./supabase-admin.server");
+  return getSupabaseAdmin();
 }
 
 export async function getEvent() {
@@ -77,7 +77,7 @@ export async function requestFingerprint(): Promise<string> {
 
 /** Make storage signed URLs browser-reachable. */
 export function publicStorageUrl(signedUrl: string): string {
-  const base = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
+  const base = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
   const idx = signedUrl.indexOf("/storage/v1/");
   if (idx === -1 || !base) return signedUrl;
   return base.replace(/\/$/, "") + signedUrl.slice(idx);

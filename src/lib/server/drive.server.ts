@@ -6,14 +6,43 @@ const GATEWAY = "https://connector-gateway.lovable.dev/google_drive";
 export class DriveNotConfigured extends Error {}
 
 function headers(extra: Record<string, string> = {}) {
-  const lovable = process.env.LOVABLE_API_KEY;
-  const key = process.env.GOOGLE_DRIVE_API_KEY;
+  const lovable = process.env["LOVABLE_API_KEY"];
+  const key = process.env["GOOGLE_DRIVE_API_KEY"];
   if (!lovable || !key) throw new DriveNotConfigured("Google Drive ainda não foi conectado.");
   return { Authorization: `Bearer ${lovable}`, "X-Connection-Api-Key": key, ...extra };
 }
 
 export function driveCredentialsPresent() {
-  return Boolean(process.env.LOVABLE_API_KEY && process.env.GOOGLE_DRIVE_API_KEY);
+  return Boolean(process.env["LOVABLE_API_KEY"] && process.env["GOOGLE_DRIVE_API_KEY"]);
+}
+
+async function previewKey() {
+  const secret = process.env["GOOGLE_DRIVE_API_KEY"];
+  if (!secret) throw new DriveNotConfigured("Google Drive ainda não foi conectado.");
+  return crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+}
+
+async function previewSignature(fileId: string, mimeType: string, expiresAt: number) {
+  const key = await previewKey();
+  const signature = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${fileId}:${mimeType}:${expiresAt}`)));
+  return btoa(String.fromCharCode(...signature)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+export async function createDrivePreviewUrl(fileId: string, mimeType: string) {
+  const expiresAt = Math.floor(Date.now() / 1000) + 900;
+  const signature = await previewSignature(fileId, mimeType, expiresAt);
+  return `/api/drive-gallery/${encodeURIComponent(fileId)}?type=${encodeURIComponent(mimeType)}&expires=${expiresAt}&signature=${signature}`;
+}
+
+export async function verifyDrivePreview(fileId: string, mimeType: string, expiresAt: number, signature: string) {
+  if (!Number.isSafeInteger(expiresAt) || expiresAt < Math.floor(Date.now() / 1000) || expiresAt > Math.floor(Date.now() / 1000) + 900) return false;
+  try {
+    const key = await previewKey();
+    const rawSignature = Uint8Array.from(atob(signature.replace(/-/g, "+").replace(/_/g, "/")), (char) => char.charCodeAt(0));
+    return crypto.subtle.verify("HMAC", key, rawSignature, new TextEncoder().encode(`${fileId}:${mimeType}:${expiresAt}`));
+  } catch {
+    return false;
+  }
 }
 
 async function driveFetch(path: string, init: RequestInit = {}, attempts = 3): Promise<Response> {
