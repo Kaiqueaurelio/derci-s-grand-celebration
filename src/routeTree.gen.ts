@@ -10,88 +10,92 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ConfirmarTokenRouteImport } from './routes/confirmar.$token'
-import { Route as GaleriaRouteImport } from './routes/galeria'
-import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as PortariaRouteImport } from './routes/portaria'
+import { Route as ConfirmarTokenRouteImport } from './routes/confirmar.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortariaRoute = PortariaRouteImport.update({
+  id: '/portaria',
+  path: '/portaria',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfirmarTokenRoute = ConfirmarTokenRouteImport.update({
   id: '/confirmar/$token',
   path: '/confirmar/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 
-const GaleriaRoute = GaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const EntrarRoute = EntrarRouteImport.update({
-  id: '/entrar',
-  path: '/entrar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
-const PortariaRoute = PortariaRouteImport.update({
-  id: '/portaria',
-  path: '/portaria',
-  getParentRoute: () => rootRouteImport,
-} as any)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/confirmar/$token': typeof ConfirmarTokenRoute
-  '/galeria': typeof GaleriaRoute
-  '/entrar': typeof EntrarRoute
   '/admin': typeof AdminRoute
+  '/entrar': typeof EntrarRoute
+  '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
+  '/confirmar/$token': typeof ConfirmarTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/confirmar/$token': typeof ConfirmarTokenRoute
-  '/galeria': typeof GaleriaRoute
-  '/entrar': typeof EntrarRoute
   '/admin': typeof AdminRoute
+  '/entrar': typeof EntrarRoute
+  '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
+  '/confirmar/$token': typeof ConfirmarTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/confirmar/$token': typeof ConfirmarTokenRoute
-  '/galeria': typeof GaleriaRoute
-  '/entrar': typeof EntrarRoute
   '/admin': typeof AdminRoute
+  '/entrar': typeof EntrarRoute
+  '/galeria': typeof GaleriaRoute
   '/portaria': typeof PortariaRoute
+  '/confirmar/$token': typeof ConfirmarTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
+  fullPaths:
+    '/' | '/admin' | '/entrar' | '/galeria' | '/portaria' | '/confirmar/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
-  id: '__root__' | '/' | '/confirmar/$token' | '/galeria' | '/entrar' | '/admin' | '/portaria'
+  to:
+    '/' | '/admin' | '/entrar' | '/galeria' | '/portaria' | '/confirmar/$token'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/entrar'
+    | '/galeria'
+    | '/portaria'
+    | '/confirmar/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ConfirmarTokenRoute: typeof ConfirmarTokenRoute
-  GaleriaRoute: typeof GaleriaRoute
-  EntrarRoute: typeof EntrarRoute
   AdminRoute: typeof AdminRoute
+  EntrarRoute: typeof EntrarRoute
+  GaleriaRoute: typeof GaleriaRoute
   PortariaRoute: typeof PortariaRoute
+  ConfirmarTokenRoute: typeof ConfirmarTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -103,18 +107,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/confirmar/$token': {
-      id: '/confirmar/$token'
-      path: '/confirmar/$token'
-      fullPath: '/confirmar/$token'
-      preLoaderRoute: typeof ConfirmarTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/galeria': {
-      id: '/galeria'
-      path: '/galeria'
-      fullPath: '/galeria'
-      preLoaderRoute: typeof GaleriaRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrar': {
@@ -124,11 +121,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portaria': {
@@ -138,16 +135,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortariaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/confirmar/$token': {
+      id: '/confirmar/$token'
+      path: '/confirmar/$token'
+      fullPath: '/confirmar/$token'
+      preLoaderRoute: typeof ConfirmarTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ConfirmarTokenRoute: ConfirmarTokenRoute,
-  GaleriaRoute: GaleriaRoute,
-  EntrarRoute: EntrarRoute,
   AdminRoute: AdminRoute,
+  EntrarRoute: EntrarRoute,
+  GaleriaRoute: GaleriaRoute,
   PortariaRoute: PortariaRoute,
+  ConfirmarTokenRoute: ConfirmarTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
