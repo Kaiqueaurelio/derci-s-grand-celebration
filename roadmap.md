@@ -1,0 +1,2 @@
+- [x] Remover botões flutuantes (página 100% limpa)
+- [x] Animação de rolagem maior

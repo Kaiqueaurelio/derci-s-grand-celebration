@@ -484,25 +484,6 @@ function InvitationPage() {
         <p className="footer-note">Feito com amor para os 80 anos da Dona Derci.</p>
       </section>
 
-      <nav className="floating-celebration-nav" aria-label="Atalhos da festa">
-        <a href="#celebracao" aria-label="Sobre a celebração">
-          <Sparkles size={18} />
-        </a>
-        <button
-          onClick={() => {
-            setOpen(true);
-            setSuccess(null);
-          }}
-          aria-label="Confirmar presença"
-        >
-          <Heart size={18} />
-        </button>
-        {event.galleryEnabled && (
-          <a href="/galeria" aria-label="Abrir álbum">
-            <Camera size={18} />
-          </a>
-        )}
-      </nav>
       {open && (
         <div
           className="modal-backdrop"
