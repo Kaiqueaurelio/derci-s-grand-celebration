@@ -1,10 +1,9 @@
 # Roadmap
 
-## Em andamento
-- [ ] Testar Google Drive novamente neste novo workspace (usuário pediu re-teste)
-
 ## Concluído
-- [x] Teste completo do app: convite OK, RSVP com 2 acompanhantes OK, login admin OK, painel OK, portaria (check-in e desfazer) OK, galeria carrega (Drive ainda sem conexão)
+- [x] Google Drive reconectado neste workspace (conexão "Kaique's Google Drive" vinculada; pasta "Derci Faz 80" acessível, vazia, canAddChildren=true)
+- [x] Álbum ao vivo do Drive testado dentro do app (/galeria) — sem erro, listando a pasta
+- [x] Teste completo do app: convite OK, RSVP com 2 acompanhantes OK, login admin OK, painel OK, portaria (check-in e desfazer) OK, galeria OK
 
 ## Pendências conhecidas
 - [ ] Pasta do Drive "Derci Faz 80" (1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU) precisa ser revalidada após a nova conexão
