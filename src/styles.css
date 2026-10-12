@@ -1837,3 +1837,47 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   .secret-section, .derci-final-cta { border: 2px solid currentColor !important; }
   .secret-section .section-copy, .derci-final-cta > p:not(.section-eyebrow) { font-weight: 600; }
 }
+
+
+/* Galeria integrada: visualizar e baixar mídia sem navegar para o Drive. */
+.drive-photo-tile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.drive-photo-tile > a:first-child {
+  display: block;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.drive-photo-tile > a:first-child img,
+.drive-photo-tile > video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #242a22;
+  border-radius: 10px;
+}
+.drive-photo-tile > span {
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+.gallery-drive-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #b58a3f;
+  border-radius: 8px;
+  color: #fffaf0 !important;
+  background: #354533;
+  font-weight: 700;
+  text-decoration: none;
+}
+.gallery-drive-download:focus-visible {
+  outline: 3px solid #111;
+  outline-offset: 3px;
+}
