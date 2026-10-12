@@ -83,18 +83,23 @@ export const getDriveGallery = createServerFn({ method: "POST" })
     const files = await listFolder(folderId);
     const items = await Promise.all(
       files
-        .filter((file) => file.mimeType.startsWith("image/") && Number(file.size ?? 0) > 0 && Number(file.size ?? 0) <= ev.max_image_mb * 1024 * 1024)
+        .filter((file) => (file.mimeType.startsWith("image/") || file.mimeType.startsWith("video/")) && Number(file.size ?? 0) > 0 && Number(file.size ?? 0) <= (file.mimeType.startsWith("video/") ? ev.max_video_mb : ev.max_image_mb) * 1024 * 1024)
         .sort((a, b) => (b.createdTime ?? "").localeCompare(a.createdTime ?? ""))
-        .slice(0, 80)
-        .map(async (file) => ({
-          id: file.id,
-          name: file.name,
-          mimeType: file.mimeType,
-          createdAt: file.imageMediaMetadata?.time ?? file.createdTime ?? null,
-          url: await createDrivePreviewUrl(file.id, file.mimeType),
-        })),
+        .slice(0, 120)
+        .map(async (file) => {
+          const url = await createDrivePreviewUrl(file.id, file.mimeType);
+          return {
+            id: file.id,
+            name: file.name,
+            mimeType: file.mimeType,
+            kind: file.mimeType.startsWith("video/") ? "video" as const : "image" as const,
+            createdAt: file.imageMediaMetadata?.time ?? file.createdTime ?? null,
+            url,
+            downloadUrl: url + "&download=" + encodeURIComponent(file.name),
+          };
+        }),
     );
-    return { items, folderUrl: `https://drive.google.com/drive/folders/${encodeURIComponent(folderId)}` };
+    return { items };
   });
 
 export const createUpload = createServerFn({ method: "POST" })
