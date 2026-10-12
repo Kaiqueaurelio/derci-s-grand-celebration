@@ -40,3 +40,22 @@ describe("Gallery uploads", () => {
     expect(() => validateGalleryUpload("video/mp4", 101 * 1024 * 1024, 10, 100)).toThrow(/maior que 100 MB/);
   });
 });
+
+import { buildRsvpSnapshot } from "@/lib/workflow-rules";
+
+describe("Assistente de confirmações", () => {
+  const ev = { honoree: "Derci", event_date: "2026-10-12", event_time: "13:00", location: "Avenida Santa Marina, 1495" };
+  const groups = [
+    { responsible_name: "Maria Silva", attending: true, guests: [{ full_name: "Maria Silva", checked_in_at: "2026-10-12T16:00:00Z" }, { full_name: "João Silva", checked_in_at: null }] },
+    { responsible_name: "Ana Souza", attending: false, guests: [{ full_name: "Ana Souza", checked_in_at: null }] },
+    { responsible_name: "Pedro Lima", attending: null, guests: [{ full_name: "Pedro Lima", checked_in_at: null }] },
+  ];
+  it("counts confirmed, declined, pending and checked-in people", () => {
+    expect(buildRsvpSnapshot(ev, groups).totals).toEqual({ groups: 3, confirmedPeople: 2, declinedPeople: 1, pendingPeople: 1, checkedInPeople: 1 });
+  });
+  it("never includes phones or notes", () => {
+    const json = JSON.stringify(buildRsvpSnapshot(ev, [{ ...groups[0], phone: "11999990000", notes: "segredo" } as never]));
+    expect(json).not.toContain("11999990000");
+    expect(json).not.toContain("segredo");
+  });
+});
