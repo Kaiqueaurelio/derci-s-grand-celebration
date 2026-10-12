@@ -17,17 +17,19 @@ export const Route = createFileRoute("/api/drive-gallery/$fileId")({
           if (!(await verifyDrivePreview(params.fileId, mimeType, expiresAt, signature))) {
             return new Response("Link expired", { status: 403 });
           }
-          const media = await downloadDriveFile(params.fileId);
+          const media = await downloadDriveFile(params.fileId, request.headers.get("range") ?? undefined);
           const filename = (url.searchParams.get("download") ?? "arquivo").replace(/[^a-zA-Z0-9._ -]/g, "_").slice(0, 120);
           const disposition = url.searchParams.has("download") ? `attachment; filename="${filename}"` : "inline";
-          return new Response(media, {
-            headers: {
-              "Content-Type": mimeType,
-              "Content-Disposition": disposition,
-              "Cache-Control": "private, max-age=300",
-              "X-Content-Type-Options": "nosniff",
-            },
+          const headers = new Headers({
+            "Content-Type": mimeType,
+            "Content-Disposition": disposition,
+            "Cache-Control": "private, max-age=300",
+            "X-Content-Type-Options": "nosniff",
+            "Accept-Ranges": "bytes",
           });
+          if (media.contentRange) headers.set("Content-Range", media.contentRange);
+          if (media.contentLength) headers.set("Content-Length", media.contentLength);
+          return new Response(media.data, { status: media.status === 206 ? 206 : 200, headers });
         } catch {
           return new Response("Image unavailable", { status: 502 });
         }
