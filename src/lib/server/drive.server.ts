@@ -173,9 +173,17 @@ export async function listFolder(folderId: string): Promise<DriveFile[]> {
   return all;
 }
 
-export async function downloadDriveFile(id: string): Promise<ArrayBuffer> {
-  const res = await driveFetch(`/drive/v3/files/${encodeURIComponent(id)}?alt=media&supportsAllDrives=true`);
-  return res.arrayBuffer();
+export async function downloadDriveFile(id: string, range?: string): Promise<{ data: ArrayBuffer; status: number; contentRange: string | null; contentLength: string | null }> {
+  const res = await driveFetch(
+    `/drive/v3/files/${encodeURIComponent(id)}?alt=media&supportsAllDrives=true`,
+    range ? { headers: { Range: range } } : {},
+  );
+  return {
+    data: await res.arrayBuffer(),
+    status: res.status,
+    contentRange: res.headers.get("content-range"),
+    contentLength: res.headers.get("content-length"),
+  };
 }
 
 /** Push an app-uploaded file (already in storage) to Drive and record the result. */
