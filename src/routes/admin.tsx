@@ -75,11 +75,11 @@ function AdminPage() {
     if(showLoading)setMediaBusy(true);
     try { setMedia(await listAllMedia()); setDrive(await getDriveStatus()); }
     catch(e){ setError(e instanceof Error ? e.message : "Falha ao carregar galeria."); }
-    finally { setMediaBusy(false); }
+    finally { if(showLoading)setMediaBusy(false); }
   }
   useEffect(()=>{void refresh();void refreshMedia();},[]);
-  // Refresh the live gallery automatically without requiring a page reload.
-  useEffect(()=>{const timer=window.setInterval(()=>{void refreshMedia();},15000);return()=>window.clearInterval(timer);},[]);
+  // Poll quietly so newly uploaded media appears without manual refresh or loading flicker.
+  useEffect(()=>{const timer=window.setInterval(()=>{void refreshMedia(false);},10000);return()=>window.clearInterval(timer);},[]);
 
   const groups=useMemo(()=>{const list=data?.groups??[];const q=query.trim().toLocaleLowerCase("pt-BR");return list.filter(g=>!q||[g.responsible_name,...g.guests.map(x=>x.full_name)].some(n=>n.toLocaleLowerCase("pt-BR").includes(q)));},[data,query]);
 
