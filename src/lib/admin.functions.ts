@@ -43,24 +43,54 @@ export const bootstrapInitialAdmin = createServerFn({ method: "POST" })
       .eq("role", "admin");
     if (countError) throw new Error("Não foi possível verificar a configuração administrativa.");
     if ((count ?? 0) > 0) throw new Error("O acesso inicial já foi utilizado. Entre com sua conta ou solicite acesso.");
-    const { data: created, error: createError } = await db.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-    });
-    if (createError || !created.user) {
-      console.error("Initial admin bootstrap failed", createError?.message);
-      throw new Error("Não foi possível criar a conta. Se ela já existir, volte e tente entrar.");
+    // Reuse the configured account if it already exists (for example, an unconfirmed signup).
+    // Only this server-configured email may be recovered, and only while no admin role exists.
+    let user = null as { id: string } | null;
+    let createdNow = false;
+    for (let page = 1; page <= 10 && !user; page++) {
+      const { data: listed, error: listError } = await db.auth.admin.listUsers({ page, perPage: 200 });
+      if (listError) {
+        console.error("Initial admin lookup failed", listError.message);
+        throw new Error("Não foi possível verificar a conta existente.");
+      }
+      user = listed.users.find((u) => u.email?.toLowerCase() === data.email)?.id
+        ? { id: listed.users.find((u) => u.email?.toLowerCase() === data.email)!.id }
+        : null;
+      if (listed.users.length < 200) break;
     }
+
+    if (user) {
+      const { error: updateError } = await db.auth.admin.updateUserById(user.id, {
+        password: data.password,
+        email_confirm: true,
+      });
+      if (updateError) {
+        console.error("Initial admin recovery failed", updateError.message);
+        throw new Error("Não foi possível atualizar a conta existente.");
+      }
+    } else {
+      const { data: created, error: createError } = await db.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: true,
+      });
+      if (createError || !created.user) {
+        console.error("Initial admin bootstrap failed", createError?.message);
+        throw new Error("Não foi possível criar a conta de administrador.");
+      }
+      user = { id: created.user.id };
+      createdNow = true;
+    }
+
     const { error: roleError } = await db.from("admin_users").insert({
-      user_id: created.user.id,
+      user_id: user.id,
       email: data.email,
       role: "admin",
     });
     if (roleError) {
-      await db.auth.admin.deleteUser(created.user.id);
+      if (createdNow) await db.auth.admin.deleteUser(user.id);
       console.error("Initial admin role assignment failed", roleError.message);
-      throw new Error("Não foi possível ativar a conta administrativa.");
+      throw new Error("A conta foi verificada, mas não foi possível ativar a permissão administrativa. Verifique a tabela admin_users.");
     }
     return { ok: true };
   });
