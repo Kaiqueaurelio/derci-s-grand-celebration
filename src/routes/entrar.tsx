@@ -57,7 +57,7 @@ function LoginPage() {
         {notice && <p className="success-note">{notice}</p>}
         <button className="primary-action submit-action" disabled={busy}>{busy?(creating?"Criando conta...":"Entrando..."):(creating?"Criar conta de administrador":"Entrar com segurança")}</button>
         <button type="button" className="outline-action" disabled={busy} onClick={()=>{const next = !creating; setCreating(next); if (next) setEmail(""); setError(""); setNotice("");}}>{creating?"Já tenho uma conta — entrar":"Primeiro acesso? Criar conta de administrador"}</button>
-        <p className="privacy-note">{creating ? "O primeiro acesso é protegido e fica disponível uma única vez." : "Apenas pessoas autorizadas devem utilizar esta área."}</p>
+        
       </form>
       <a className="add-companion" href="/">← Voltar ao convite</a>
     </section>
