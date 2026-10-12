@@ -37,18 +37,8 @@ function InvitationPage() {
 
   useEffect(() => {
     const updateCountdown = () => {
-      const configuredTime = String(event.eventTime || "");
-      const timeMatch = configuredTime.match(/(?:^|\D)([01]?\d|2[0-3])\s*(?::|h)?\s*([0-5]\d)?/i);
-      const hours = timeMatch ? Number(timeMatch[1]) : 13;
-      const minutes = timeMatch?.[2] ? Number(timeMatch[2]) : 0;
-      const eventTime = timeMatch && hours <= 23
-        ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
-        : "13:00";
+      const eventTime = /^\d{2}:\d{2}$/.test(event.eventTime || "") ? event.eventTime : "13:00";
       const target = new Date(`${event.eventDate}T${eventTime}:00`).getTime();
-      if (!Number.isFinite(target)) {
-        setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
       const remaining = Math.max(0, target - Date.now());
       const totalSeconds = Math.floor(remaining / 1000);
       setCountdown({ days: Math.floor(totalSeconds / 86400), hours: Math.floor((totalSeconds % 86400) / 3600), minutes: Math.floor((totalSeconds % 3600) / 60), seconds: totalSeconds % 60 });
@@ -57,55 +47,6 @@ function InvitationPage() {
     const timer = window.setInterval(updateCountdown, 1000);
     return () => window.clearInterval(timer);
   }, [event.eventDate, event.eventTime]);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const dialog = document.querySelector<HTMLElement>(".rsvp-modal[role='dialog']");
-    if (!dialog) return;
-    const previousActive = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const focusFrame = window.requestAnimationFrame(() => {
-      dialog.querySelector<HTMLElement>('input:not([type="radio"]):not([disabled])')?.focus();
-    });
-    const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setOpen(false);
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const items = Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector))
-        .filter((item) => item.getClientRects().length > 0);
-      const first = items[0];
-      const last = items[items.length - 1];
-      if (!first || !last) {
-        event.preventDefault();
-        return;
-      }
-      if (!dialog.contains(document.activeElement)) {
-        event.preventDefault();
-        (event.shiftKey ? last : first).focus();
-      } else if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      if (previousActive?.isConnected) previousActive.focus();
-    };
-  }, [open]);
 
   useEffect(() => {
     const nodes = Array.from(document.querySelectorAll<HTMLElement>(".scroll-reveal"));
@@ -119,14 +60,8 @@ function InvitationPage() {
   const mapAddress = event.location?.trim() || "Avenida Santa Marina, 1495, São Paulo, SP, Brasil";
   const mapUrl = event.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(mapAddress.includes("Santa Marina") ? mapAddress + ", São Paulo, SP, Brasil" : mapAddress);
 
-  const [pageUrl, setPageUrl] = useState("");
-  useEffect(() => {
-    setPageUrl(window.location.href);
-  }, []);
-  const shareUrl = useMemo(
-    () => "https://wa.me/?text=" + encodeURIComponent("Você está convidado para os 80 anos da Dona Derci! " + pageUrl),
-    [pageUrl],
-  );
+  const rsvpUrl = typeof window !== "undefined" ? window.location.href : "";
+  const shareUrl = useMemo(() => "https://wa.me/?text=" + encodeURIComponent("Você está convidado para os 80 anos da Dona Derci! " + rsvpUrl), [rsvpUrl]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -154,14 +89,9 @@ function InvitationPage() {
     if (navigator.share) {
       try { await navigator.share({ title: "80 anos da Dona Derci", text, url: window.location.href }); } catch { /* share dismissed */ }
     } else {
-      try {
-        if (!navigator.clipboard?.writeText) throw new Error("A área de transferência não está disponível.");
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 2200);
-      } catch {
-        window.prompt("Copie o convite para compartilhar:", text);
-      }
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2200);
     }
   }
 
@@ -224,10 +154,7 @@ function InvitationPage() {
           <a className="admin-entry-link" href="/entrar"><LockKeyhole size={16} aria-hidden="true"/> Acesso da organização</a>
         </div>
 
-        <button className={celebrationBurst ? "little-celebration is-celebrating" : "little-celebration"} type="button" aria-live="polite" onClick={() => {
-          setCelebrationBurst(true);
-          window.setTimeout(() => setCelebrationBurst(false), 1800);
-        }}><Sparkles size={15}/> {celebrationBurst ? "Um abraço cheio de amor!" : "Celebrar esse amor"} <span>♡</span></button>
+        <button className="little-celebration" type="button" onClick={() => setCelebrationBurst(true)}><Sparkles size={15}/> Celebrar esse amor <span>♡</span></button>
         <footer className="footer-note">Com carinho, para celebrar uma vida inteira de amor.</footer>
       </div>
 
@@ -277,7 +204,7 @@ function InvitationPage() {
         <h2>Vamos guardar esse dia para sempre.</h2>
         <p className="section-copy">Depois da comemoração, volte aqui para rever os registros desse encontro. Cada foto vai ajudar a guardar um pedacinho desse dia.</p>
         <div className="memory-ribbon"><span>momentos</span><span>♡</span><span>memórias</span><span>♡</span><span>família</span></div>
-        {event.galleryEnabled && <a className="gallery-cta" href="https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing" target="_blank" rel="noreferrer"><Camera size={18}/> Ver fotos e vídeos no Google Drive <ArrowRight size={17}/></a>}
+        <a className="gallery-cta" href="https://drive.google.com/drive/folders/1U02PNAceEReBC0_wz7RPwVj9ZTSkbHkU?usp=sharing" target="_blank" rel="noreferrer"><Camera size={18}/> Ver fotos e vídeos no Google Drive <ArrowRight size={17}/></a>
         {event.galleryEnabled && <a className="gallery-secondary-cta" href="/galeria"><UploadCloud size={17}/> Enviar fotos para compartilhar</a>}
       </section>
 
@@ -298,7 +225,7 @@ function InvitationPage() {
       </nav>
       {open && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
-          <section className="rsvp-modal" role="dialog" aria-modal="true" aria-labelledby="rsvp-title" aria-describedby={success ? undefined : "rsvp-description"} tabIndex={-1}>
+          <section className="rsvp-modal" role="dialog" aria-modal="true" aria-labelledby="rsvp-title">
             <button className="modal-close" onClick={() => setOpen(false)} aria-label="Fechar">×</button>
             {success ? (
               <div className="success-state">
@@ -314,11 +241,11 @@ function InvitationPage() {
               <>
                 <p className="modal-kicker">80 ANOS DE AMOR</p>
                 <h2 id="rsvp-title">Confirme sua presença</h2>
-                <p className="modal-subtitle" id="rsvp-description">Informe seu nome e o de quem vai com você para deixarmos tudo organizado na entrada.</p>
+                <p className="modal-subtitle">Informe seu nome e o de quem vai com você para deixarmos tudo organizado na entrada.</p>
                 <form onSubmit={submit}>
                   <label>Seu nome completo<input required minLength={3} value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome e sobrenome" autoComplete="name"/></label>
-                  <label>WhatsApp <span className="optional">({event.phoneRequired ? "obrigatório" : "opcional"})</span><input required={event.phoneRequired} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="DDD + telefone" autoComplete="tel" inputMode="tel"/></label>
-                  <fieldset><legend>Você vai comparecer?</legend><label className="radio-label"><input type="radio" name="attending" checked={attending} onChange={() => setAttending(true)}/> Sim, estarei lá!</label><label className="radio-label"><input type="radio" name="attending" checked={!attending} onChange={() => { setAttending(false); setCompanions([]); }}/> Infelizmente não poderei ir.</label></fieldset>
+                  <label>WhatsApp <span className="optional">(opcional)</span><input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="DDD + telefone" autoComplete="tel" inputMode="tel"/></label>
+                  <fieldset><legend>Você vai comparecer?</legend><label className="radio-label"><input type="radio" checked={attending} onChange={() => setAttending(true)}/> Sim, estarei lá!</label><label className="radio-label"><input type="radio" checked={!attending} onChange={() => { setAttending(false); setCompanions([]); }}/> Infelizmente não poderei ir.</label></fieldset>
                   {attending && <div className="companions"><div className="companions-heading"><Users size={18}/><span>Familiares e acompanhantes</span></div>{companions.map((person, i) => <div className="companion-row" key={i}><input aria-label={"Nome do acompanhante " + (i+1)} required value={person} onChange={(e) => setCompanions(old => old.map((n,j) => i===j ? e.target.value : n))} placeholder="Nome completo"/><button type="button" aria-label="Remover acompanhante" onClick={() => setCompanions(old => old.filter((_,j) => j!==i))}>×</button></div>)}{companions.length < event.maxCompanions && <button className="add-companion" type="button" onClick={() => setCompanions(old => [...old, ""])}>+ Adicionar acompanhante</button>}</div>}
                   <label>Observações <span className="optional">(opcional)</span><textarea value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={1000} placeholder="Alguma informação para a organização?"/></label>
                   {error && <p className="form-error" role="alert">{error}</p>}
