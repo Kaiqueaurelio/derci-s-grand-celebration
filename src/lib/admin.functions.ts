@@ -13,7 +13,7 @@ export const getMyRole = createServerFn({ method: "GET" })
     const role = await getRole(context.supabase, context.userId);
     const email = (context.claims as { email?: string }).email ?? "";
     let canClaim = false;
-    if (!role && canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaique@hotmail.com"))) {
+    if (!role && canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaiquee@hotmail.com"))) {
       const db = await admin();
       const { count } = await db
         .from("admin_users")
@@ -33,7 +33,7 @@ const initialAdminSchema = z.object({
 export const bootstrapInitialAdmin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => initialAdminSchema.parse(d))
   .handler(async ({ data }) => {
-    const allowedEmail = (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaique@hotmail.com").trim().toLowerCase();
+    const allowedEmail = (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaiquee@hotmail.com").trim().toLowerCase();
     if (data.email !== allowedEmail) throw new Error("Não foi possível concluir o primeiro acesso.");
     const { admin } = await S();
     const db = await admin();
@@ -101,7 +101,7 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { admin } = await S();
     const email = (context.claims as { email?: string }).email ?? "";
-    if (!canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaique@hotmail.com")) ) {
+    if (!canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaiquee@hotmail.com")) ) {
       throw new Error(
         "Esta conta não está autorizada para ativar o primeiro acesso administrativo.",
       );
