@@ -19,7 +19,7 @@ function LoginPage() {
     e.preventDefault(); setBusy(true); setError(""); setNotice("");
     try {
       if (creating) {
-        if (email.trim().toLowerCase() !== "admin@salvador.br") {
+        if (email.trim().toLowerCase() !== "kcaique@hotmail.com") {
           throw new Error("O cadastro inicial está reservado ao e-mail autorizado para administração.");
         }
         const { data, error: signUpError } = await supabase.auth.signUp({
@@ -73,7 +73,7 @@ function LoginPage() {
         {notice && <p className="success-note">{notice}</p>}
         <button className="primary-action submit-action" disabled={busy}>{busy?(creating?"Criando conta...":"Entrando..."):(creating?"Criar conta de administrador":"Entrar com segurança")}</button>
         <button type="button" className="outline-action" disabled={busy} onClick={()=>{const next = !creating; setCreating(next); if (next) setEmail("admin@salvador.br"); setError(""); setNotice("");}}>{creating?"Já tenho uma conta — entrar":"Primeiro acesso? Criar conta de administrador"}</button>
-        <p className="privacy-note">Para o primeiro cadastro, use admin@salvador.br. A função só será ativada se ainda não existir administrador.</p>
+        <p className="privacy-note">Para o primeiro cadastro, use kcaique@hotmail.com. A função só será ativada se ainda não existir administrador.</p>
       </form>
       <a className="add-companion" href="/">← Voltar ao convite</a>
     </section>
