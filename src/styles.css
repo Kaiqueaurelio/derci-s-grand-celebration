@@ -1656,3 +1656,4 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
 .inv-actions-shell{margin-top:0!important}
 .inv-actions-shell .corner,.inv-actions-shell .frame-line{display:none}
 @media (prefers-reduced-motion:no-preference){.inv-card{animation:derci-arrive .95s cubic-bezier(.2,.7,.2,1) both}}
+.invitation-shell.inv-actions-shell{background:transparent!important;border:0!important;box-shadow:none!important;padding-top:4px!important}
