@@ -24,6 +24,47 @@ export const getMyRole = createServerFn({ method: "GET" })
     return { role, canClaim, email };
   });
 
+const initialAdminSchema = z.object({
+  email: z.string().trim().email().transform((v) => v.toLowerCase()),
+  password: z.string().min(8).max(128),
+});
+
+/** Creates the one configured initial administrator without relying on email delivery. */
+export const bootstrapInitialAdmin = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => initialAdminSchema.parse(d))
+  .handler(async ({ data }) => {
+    const allowedEmail = (process.env["INITIAL_ADMIN_EMAIL"] ?? "kcaique@hotmail.com").trim().toLowerCase();
+    if (data.email !== allowedEmail) throw new Error("Não foi possível concluir o primeiro acesso.");
+    const { admin } = await S();
+    const db = await admin();
+    const { count, error: countError } = await db
+      .from("admin_users")
+      .select("user_id", { count: "exact", head: true })
+      .eq("role", "admin");
+    if (countError) throw new Error("Não foi possível verificar a configuração administrativa.");
+    if ((count ?? 0) > 0) throw new Error("O acesso inicial já foi utilizado. Entre com sua conta ou solicite acesso.");
+    const { data: created, error: createError } = await db.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+    });
+    if (createError || !created.user) {
+      console.error("Initial admin bootstrap failed", createError?.message);
+      throw new Error("Não foi possível criar a conta. Se ela já existir, volte e tente entrar.");
+    }
+    const { error: roleError } = await db.from("admin_users").insert({
+      user_id: created.user.id,
+      email: data.email,
+      role: "admin",
+    });
+    if (roleError) {
+      await db.auth.admin.deleteUser(created.user.id);
+      console.error("Initial admin role assignment failed", roleError.message);
+      throw new Error("Não foi possível ativar a conta administrativa.");
+    }
+    return { ok: true };
+  });
+
 /** Only the server-configured initial admin may claim the role while no admin exists. */
 export const claimFirstAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
