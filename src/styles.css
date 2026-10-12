@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Lora:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss" source(none);
 @source "../src";
@@ -1726,3 +1726,40 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   .story-icon { width: 54px; height: 54px; }
   .story-icon > svg { width: 24px; height: 24px; }
 }
+
+
+/* Paleta e tipografia fiéis ao convite de referência, sem alterar seu conteúdo. */
+:root {
+  --derci-cream: #f7efdf;
+  --derci-gold: #b58a3f;
+  --derci-dark-gold: #79551f;
+  --derci-ink: #171614;
+  --derci-green: #4d5638;
+}
+.inv-card {
+  background: radial-gradient(ellipse at 50% 42%, #fff9ed 0%, #f7efdf 72%, #efe2cb 100%);
+  box-shadow: 0 20px 55px -34px rgba(80, 58, 20, .4);
+}
+.inv-frame { border-color: #ad8035; }
+.inv-surprise,
+.inv-age,
+.inv-name,
+.inv-swash,
+.inv-details svg,
+.inv-drink svg,
+.inv-important > svg,
+.inv-important strong {
+  color: #956a27;
+}
+.inv-surprise svg,
+.inv-swash { stroke: #956a27; }
+.inv-age,
+.inv-name {
+  background-image: linear-gradient(180deg, #d8b36a 0%, #b2863c 52%, #805a21 100%);
+}
+.inv-heart { color: #956a27; -webkit-text-fill-color: #956a27; }
+.inv-details > div + div { border-left-color: #ad8035; }
+.inv-drink {
+  background: radial-gradient(ellipse at center, rgba(222,198,150,.55) 0%, rgba(230,210,170,.35) 55%, transparent 75%);
+}
+.inv-closing { color: #79551f; }
