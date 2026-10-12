@@ -71,8 +71,8 @@ function AdminPage() {
     finally{setSettingsSaving(false);}
   }
   function patchSettings(patch:Partial<EventSettings>){setEventSettings(old=>old?{...old,...patch}:old);}
-  async function refreshMedia(){
-    setMediaBusy(true);
+  async function refreshMedia(showLoading=true){
+    if(showLoading)setMediaBusy(true);
     try { setMedia(await listAllMedia()); setDrive(await getDriveStatus()); }
     catch(e){ setError(e instanceof Error ? e.message : "Falha ao carregar galeria."); }
     finally { setMediaBusy(false); }
