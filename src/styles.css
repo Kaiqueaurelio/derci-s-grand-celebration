@@ -1763,3 +1763,77 @@ html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   background: radial-gradient(ellipse at center, rgba(222,198,150,.55) 0%, rgba(230,210,170,.35) 55%, transparent 75%);
 }
 .inv-closing { color: #79551f; }
+
+
+/* Acessibilidade: contraste explícito nas seções de surpresa e confirmação.
+   Evita texto dourado claro/translúcido sobre creme ou verde. */
+.secret-section {
+  background: #fffaf0 !important;
+  color: #29251f !important;
+  border: 1px solid #c6a25d;
+}
+.secret-section .section-eyebrow,
+.secret-section h2,
+.secret-section .section-copy,
+.secret-section .secret-signature,
+.secret-section > svg {
+  opacity: 1 !important;
+  color: #4a3519 !important;
+  -webkit-text-fill-color: #4a3519 !important;
+}
+.secret-section .section-eyebrow {
+  color: #79551f !important;
+  font-weight: 700;
+}
+.secret-section .section-copy {
+  color: #29251f !important;
+  font-size: clamp(18px, 2.3vw, 21px);
+  line-height: 1.65;
+}
+.secret-section .secret-signature { color: #79551f !important; }
+
+.derci-final-cta {
+  background: #354533 !important;
+  color: #fffaf0 !important;
+  border: 1px solid #b58a3f;
+}
+.derci-final-cta .section-eyebrow,
+.derci-final-cta h2,
+.derci-final-cta > p,
+.derci-final-cta .footer-note,
+.derci-final-cta .final-share-link,
+.derci-final-cta > svg {
+  opacity: 1 !important;
+  color: #fffaf0 !important;
+  -webkit-text-fill-color: #fffaf0 !important;
+}
+.derci-final-cta .section-eyebrow {
+  color: #f0dca8 !important;
+  font-weight: 700;
+}
+.derci-final-cta h2 {
+  text-shadow: none !important;
+}
+.derci-final-cta > p:not(.section-eyebrow) {
+  color: #fffaf0 !important;
+  font-size: clamp(18px, 2.2vw, 21px);
+  line-height: 1.6;
+}
+.derci-final-cta .footer-note { color: #f0e5cc !important; }
+.derci-final-cta .final-share-link { color: #fffaf0 !important; text-decoration: underline; text-underline-offset: 4px; }
+.derci-final-cta .final-confirm-button {
+  background: #80551f !important;
+  color: #ffffff !important;
+  border: 2px solid #e5c989 !important;
+}
+.derci-final-cta .final-confirm-button:hover { background: #684317 !important; }
+.secret-section a:focus-visible,
+.derci-final-cta a:focus-visible,
+.derci-final-cta button:focus-visible {
+  outline: 3px solid #111111 !important;
+  outline-offset: 4px;
+}
+@media (prefers-contrast: more) {
+  .secret-section, .derci-final-cta { border: 2px solid currentColor !important; }
+  .secret-section .section-copy, .derci-final-cta > p:not(.section-eyebrow) { font-weight: 600; }
+}
