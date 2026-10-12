@@ -30,7 +30,7 @@ export const claimFirstAdmin = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { admin } = await S();
     const email = (context.claims as { email?: string }).email ?? "";
-    if (!canClaimInitialAdmin(email, process.env["INITIAL_ADMIN_EMAIL"])) {
+    if (!canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "admin@salvador.br")) ) {
       throw new Error(
         "Esta conta não está autorizada para ativar o primeiro acesso administrativo.",
       );
