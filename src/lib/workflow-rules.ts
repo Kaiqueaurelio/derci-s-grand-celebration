@@ -33,3 +33,29 @@ export function validateGalleryUpload(mimeType: string, size: number, maxImageMb
   if (size <= 0) throw new Error("Arquivo vazio ou inválido.");
   return { kind: isVideo ? "video" as const : "image" as const, mime, maxMb };
 }
+
+type SnapshotGroup = { responsible_name: string; attending: boolean | null; guests?: { full_name: string; checked_in_at: string | null }[] | null };
+
+/** Data sent to the staff assistant: names, status and check-in only (no phones or notes). */
+export function buildRsvpSnapshot(
+  ev: { honoree: string; event_date: string; event_time: string; location: string },
+  groups: SnapshotGroup[],
+) {
+  const rows = groups.map((g) => ({
+    responsible: g.responsible_name,
+    status: g.attending === true ? "confirmado" : g.attending === false ? "não comparecerá" : "pendente",
+    guests: (g.guests ?? []).map((x) => ({ name: x.full_name, checkedIn: Boolean(x.checked_in_at) })),
+  }));
+  const count = (s: string) => rows.filter((g) => g.status === s).reduce((n, g) => n + g.guests.length, 0);
+  return {
+    event: ev.honoree, eventDate: ev.event_date, eventTime: ev.event_time, location: ev.location,
+    totals: {
+      groups: rows.length,
+      confirmedPeople: count("confirmado"),
+      declinedPeople: count("não comparecerá"),
+      pendingPeople: count("pendente"),
+      checkedInPeople: rows.reduce((n, g) => n + g.guests.filter((x) => x.checkedIn).length, 0),
+    },
+    groups: rows,
+  };
+}
