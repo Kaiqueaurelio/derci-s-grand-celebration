@@ -13,7 +13,7 @@ export const getMyRole = createServerFn({ method: "GET" })
     const role = await getRole(context.supabase, context.userId);
     const email = (context.claims as { email?: string }).email ?? "";
     let canClaim = false;
-    if (!role && canClaimInitialAdmin(email, process.env["INITIAL_ADMIN_EMAIL"])) {
+    if (!role && canClaimInitialAdmin(email, (process.env["INITIAL_ADMIN_EMAIL"] ?? "admin@salvador.br"))) {
       const db = await admin();
       const { count } = await db
         .from("admin_users")
